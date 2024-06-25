@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String      @id @unique @default(uuid())
+  userName     String      @unique
+  name         String
+  email        String      @unique
+  password     String
+  birthDate    String   
+  profileImage String      @default("https://res.cloudinary.com/dk27cpuh4/image/upload/v1715344128/ukzqdp4dcmdnjtzfiz6e.png")
+  bio          String 
+  followers    Follows[]   @relation("followers")
+  following    Follows[]   @relation("following")
+  posts        Post[]
+  comments     Comment[]
+  likes        Like[]
+  savedPosts   SavedPost[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime?   @updatedAt
+  isVerified   Boolean     @default(false)
+  refreshToken  String?
+}
+
+model Post {
+  id         String      @id @unique @default(uuid())
+  url        String
+  caption    String?
+  ownerId     String?
+  user       User?       @relation(fields: [ownerId], references: [id])
+  comments   Comment[]
+  likes      Like[]
+  savedPosts SavedPost[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime?   @updatedAt
+}
+
+model Comment {
+  id        String    @id @unique @default(uuid())
+  text      String
+  postId    String?
+  post      Post?     @relation(fields: [postId], references: [id])
+  ownerId   String
+  owner     User      @relation(fields: [ownerId], references: [id])
+  likes     Like[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+}
+
+model Like {
+  id        String    @id @unique @default(uuid())
+  postId    String?
+  post      Post?     @relation(fields: [postId], references: [id])
+  commentId String?
+  comment   Comment?  @relation(fields: [commentId], references: [id])
+  ownerId   String
+  owner     User      @relation(fields: [ownerId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+}
+
+model Follows {
+  followedById String
+  followingId  String
+  followedBy   User   @relation("followers", fields: [followedById], references: [id])
+  following    User   @relation("following", fields: [followingId], references: [id])
+
+  @@id([followingId, followedById])
+}
+
+model SavedPost {
+  id     String @id @unique @default(uuid())
+  ownerId String
+  postId String
+  user   User   @relation(fields: [ownerId], references: [id])
+  post   Post   @relation(fields: [postId], references: [id])
+
+  @@unique([ownerId, postId])
+}
