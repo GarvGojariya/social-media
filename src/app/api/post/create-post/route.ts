@@ -2,13 +2,14 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../../utils/db";
 import * as jose from "jose"
+import { verifyToken } from "../../../../../utils/verifyToken";
 
 export async function POST(req: NextResponse) {
     const token = await cookies().get("accessToken")
     const { url, caption } = await req.json()
     if (token) {
         try {
-            const { payload: decodedToken } = await jose.jwtVerify(token.value, new TextEncoder().encode(process.env.ACCESS_TOKEN_SECRET))
+            const decodedToken = await verifyToken()
             if (decodedToken.id) {
                 const post = await prisma.post.create({
                     data: {

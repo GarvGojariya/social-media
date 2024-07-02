@@ -19,6 +19,14 @@ export async function GET(req: NextRequest) {
                 const posts = await prisma.post.findMany({
                     where: {
                         ownerId: id
+                    },
+                    include: {
+                        _count:{
+                            select:{
+                                comments:true,
+                                likes:true
+                            }
+                        }
                     }
                 })
                 if (!posts) {

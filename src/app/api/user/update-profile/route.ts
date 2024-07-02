@@ -2,36 +2,48 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import * as jose from "jose"
 import { prisma } from "../../../../../utils/db";
+import { verifyToken } from "../../../../../utils/verifyToken";
 
 export async function POST(req: NextRequest) {
-    const { username, name, profileImage, birthDate, bio } = await req.json();
-    const token = await cookies().get("accessToken")
+    const { userName, name, profileImage, birthDate, bio } = await req.json();
+    const decodedToken = await verifyToken()
     try {
-        if (token) {
-            const { payload: decodedToken } = await jose.jwtVerify(token.value, new TextEncoder().encode(process.env.ACCESS_TOKEN_SECRET))
-            if (decodedToken?.id) {
-                const user = await prisma.user.findFirst({
+        if (decodedToken && decodedToken.id) {
+            const user = await prisma.user.findFirst({
+                where: {
+                    id: decodedToken.id
+                }
+            })
+            if (userName) {
+                const existingUserName = await prisma.user.findFirst({
                     where: {
-                        id: decodedToken.id
+                        userName: userName
                     }
                 })
-                if (!user) {
-                    return NextResponse.json({ message: "User not found" }, { status: 404 })
-                } else {
-                    await prisma.user.update({
-                        where: {
-                            id: user.id
-                        },
-                        data: {
-                            userName: username ?? user.userName,
-                            name: name ?? user.name,
-                            profileImage: profileImage ?? user.profileImage,
-                            birthDate: birthDate ?? user.birthDate,
-                            bio: bio ?? user.bio
-                        }
-                    })
-                    return NextResponse.json({ message: "User updated successfully" }, { status: 200 })
+                if (existingUserName) {
+                    return NextResponse.json({
+                        error: "This username is already exists please try diffrent one"
+                    }, {
+                        status: 400
+                    });
                 }
+            }
+            if (!user) {
+                return NextResponse.json({ message: "User not found" }, { status: 404 })
+            } else {
+                await prisma.user.update({
+                    where: {
+                        id: user.id
+                    },
+                    data: {
+                        userName: userName ?? user.userName,
+                        name: name ?? user.name,
+                        profileImage: profileImage ?? user.profileImage,
+                        birthDate: birthDate ?? user.birthDate,
+                        bio: bio ?? user.bio
+                    }
+                })
+                return NextResponse.json({ message: "User updated successfully" }, { status: 200 })
             }
         } else {
             return NextResponse.json({

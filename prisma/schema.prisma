@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -13,9 +14,9 @@ model User {
   name         String
   email        String      @unique
   password     String
-  birthDate    String   
+  birthDate    String
   profileImage String      @default("https://res.cloudinary.com/dk27cpuh4/image/upload/v1715344128/ukzqdp4dcmdnjtzfiz6e.png")
-  bio          String 
+  bio          String
   followers    Follows[]   @relation("followers")
   following    Follows[]   @relation("following")
   posts        Post[]
@@ -25,14 +26,14 @@ model User {
   createdAt    DateTime    @default(now())
   updatedAt    DateTime?   @updatedAt
   isVerified   Boolean     @default(false)
-  refreshToken  String?
+  refreshToken String?
 }
 
 model Post {
   id         String      @id @unique @default(uuid())
   url        String
   caption    String?
-  ownerId     String?
+  ownerId    String?
   user       User?       @relation(fields: [ownerId], references: [id])
   comments   Comment[]
   likes      Like[]
@@ -68,18 +69,18 @@ model Like {
 model Follows {
   followedById String
   followingId  String
-  followedBy   User   @relation("followers", fields: [followedById], references: [id])
-  following    User   @relation("following", fields: [followingId], references: [id])
+  followedBy   User   @relation("following", fields: [followedById], references: [id])
+  following    User   @relation("followers", fields: [followingId], references: [id])
 
   @@id([followingId, followedById])
 }
 
 model SavedPost {
-  id     String @id @unique @default(uuid())
+  id      String @id @unique @default(uuid())
   ownerId String
-  postId String
-  user   User   @relation(fields: [ownerId], references: [id])
-  post   Post   @relation(fields: [postId], references: [id])
+  postId  String
+  user    User   @relation(fields: [ownerId], references: [id])
+  post    Post   @relation(fields: [postId], references: [id])
 
   @@unique([ownerId, postId])
 }

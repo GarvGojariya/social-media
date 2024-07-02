@@ -8,6 +8,10 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
+  "type": "module",
   "dependencies": {
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.4",
@@ -16,7 +20,7 @@
     "@mui/material": "^5.15.20",
     "@mui/styled-engine-sc": "^6.0.0-alpha.18",
     "@nextui-org/react": "^2.4.2",
-    "@prisma/client": "^5.15.1",
+    "@prisma/client": "^5.16.1",
     "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.2.0",
@@ -27,19 +31,20 @@
     "next": "14.2.4",
     "next-auth": "^4.24.7",
     "nodemailer": "^6.9.13",
-    "prisma": "^5.15.0",
     "react": "^18",
     "react-dom": "^18",
     "styled-components": "^6.1.11"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
-    "@types/node": "^20",
+    "@types/node": "^20.14.9",
     "@types/nodemailer": "^6.4.15",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.4",
-    "typescript": "^5"
+    "prisma": "^5.16.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.2"
   }
 }
