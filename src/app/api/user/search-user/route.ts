@@ -16,7 +16,6 @@ export async function GET(req: NextRequest) {
     }
     if (name) {
         try {
-            console.log({ name })
             await connectDatabase()
             const searchResults = await prisma.user.findMany({
                 where: {
@@ -33,7 +32,7 @@ export async function GET(req: NextRequest) {
                             OR: [
                                 {
                                     name: {
-                                        search: name,
+                                        contains: name,
                                         mode: "insensitive"
                                     },
                                 },

@@ -6,6 +6,15 @@ import { prisma } from "../../../../../utils/db";
 export async function GET(req: NextRequest) {
     const params = req.nextUrl.searchParams
     const userId = params.get('userId')
+    const decodedToken = await verifyToken()
+    if (!decodedToken) {
+        return NextResponse.json({
+            message: 'You are not authorized for this action please login first'
+        }, {
+            status:
+                401
+        })
+    }
     if (userId) {
         try {
             await connectDatabase()
@@ -32,9 +41,24 @@ export async function GET(req: NextRequest) {
             if (!user) {
                 return NextResponse.json({ error: "User not found" }, { status: 404 })
             } else {
+                var following = false;
+                const follow = await prisma.follows.findUnique({
+                    where: {
+                        followingId_followedById: {
+                            followingId: userId,
+                            followedById: decodedToken.id
+                        }
+                    }
+                })
+                if (follow) {
+                    following = true;
+                }
                 return NextResponse.json({
                     message: "User details fetched successfully",
-                    user
+                    data:{
+                        user,
+                        following
+                    }
                 }, {
                     status: 200
                 })
