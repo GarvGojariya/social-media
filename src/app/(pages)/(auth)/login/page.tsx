@@ -7,18 +7,18 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { signIn, useSession } from "next-auth/react";
 // import axios from "axios"
 import { frame1 } from "@/assets/images";
-import CustomTextBox from "@/app/components/InputField";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { API, instance } from "@/app/lib/axios"
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import Loader from "@/app/components/Loader";
 
 const page = () => {
-    const [email, setEmail] = useState<string | null>("")
     const [password, setPassword] = useState<string | null>("")
     const [loading, setLoading] = useState<boolean>(false)
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false)
+    const [emailOrUsername, setEmailOrUsername] = useState<string>("")
 
     const router = useRouter()
 
@@ -26,15 +26,15 @@ const page = () => {
         setLoading(true)
         event.preventDefault();
         try {
-            const response = await API.post("/api/user/signin", { email: email, password: password });
+            const response = await API.post("/api/user/signin", { emailOrUsername: emailOrUsername, password: password });
             console.log(response);
-            setEmail("");
+            setEmailOrUsername("");
             setPassword("");
             router.push("/");
             setLoading(false)
             toast.success(response.data?.message ?? "Login success");
         } catch (error: any) {
-            setEmail("");
+            setEmailOrUsername("");
             setPassword("");
             console.log(error);
             setLoading(false)
@@ -55,6 +55,12 @@ const page = () => {
                 backgroundSize: "cover",
             }}>
             <CssBaseline />
+            <Backdrop
+                sx={{ color: '#fff', zIndex: 10 }}
+                open={loading}
+            >
+                <Loader />
+            </Backdrop>
             <Box
                 sx={{
                     display: 'flex',
@@ -85,8 +91,8 @@ const page = () => {
                         name="email"
                         autoComplete="email"
                         autoFocus
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        value={emailOrUsername}
+                        onChange={(e) => setEmailOrUsername(e.target.value)}
                         variant="outlined"
                     />
                     <TextField
@@ -126,7 +132,7 @@ const page = () => {
                     </Button>
                     <Grid container>
                         <Grid item xs>
-                            <Link href="#" variant="body2">
+                            <Link href="/forget-password" variant="body2">
                                 Forgot password?
                             </Link>
                         </Grid>
@@ -138,12 +144,6 @@ const page = () => {
                     </Grid>
                 </Box>
             </Box>
-            <Backdrop
-                sx={{ color: '#fff', zIndex: 10 }}
-                open={loading}
-            >
-                <CircularProgress color="inherit" />
-            </Backdrop>
         </Box>
     );
 };

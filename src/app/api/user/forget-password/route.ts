@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
             })
         }else{
             const token = await generateEncryptedVarifyLink(user)
-            const link = `${process.env.BASE_URL_FOR_WEB}/change-password/${token.iv}/${token.encryptedData}`;
+            const link = `${process.env.BASE_URL_FOR_WEB}/forget-password/${token.iv}/${token.encryptedData}`;
             try {
                 await sendEmailWithVarifyLink(
                     user.email,

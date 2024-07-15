@@ -41,7 +41,6 @@ export async function GET(req: NextRequest) {
                     }, { status: 200 })
                 }
             } catch (error) {
-                console.log(error)
                 return NextResponse.json({
                     message: "Error fetching user posts"
                 }, { status: 500 })

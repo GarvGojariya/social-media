@@ -7,13 +7,10 @@ cloudinary.config({
   timeout: 60000,
 });
 
-console.log("Cloudinary API Key:", process.env.CLOUDINARY_API_KEY);
 export async function POST(request: Request) {
 
   const body = await request.json();
   const { paramsToSign } = body;
-  console.log("Params to sign:", paramsToSign);
-
   try {
     const signature = cloudinary.utils.api_sign_request(
       paramsToSign,

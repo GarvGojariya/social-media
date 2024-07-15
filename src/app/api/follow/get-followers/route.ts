@@ -29,29 +29,47 @@ export async function GET(req: NextRequest) {
                 status: 404
             })
         } else {
-            const followers = await prisma.follows.findMany({
+            const detailData = await prisma.follows.findMany({
                 where: {
                     followingId: userId
                 },
                 skip: (parseInt(pageNo) - 1) * limit,
                 take: limit,
-                include:{
-                    followedBy:{
-                        select:{
-                            id:true,
-                            name:true,
-                            profileImage:true,
-                            userName:true
+                include: {
+                    followedBy: {
+                        select: {
+                            id: true,
+                            name: true,
+                            profileImage: true,
+                            userName: true,
+                            followers: {
+                                where: {
+                                    followedById: userId,
+                                },
+                                select: {
+                                    followedById: true
+                                }
+                            }
                         }
-                    },
-                },
-            })
+                    }
+                }
+            });
+            const data: any = await detailData
+            await data.map((d: any) => {
+                if (d.followedBy.followers[0].followedById == userId) {
+                    d.followedBy.isFollowed = true
+                }
+            }
+            )
+
             return NextResponse.json({
-                followers: followers
+                followers: data,
+                // agg
             })
         }
 
     } catch (error) {
+        console.log(error)
         return NextResponse.json({
             error: "Internal Server Error"
         }, {

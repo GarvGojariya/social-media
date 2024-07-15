@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     },
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts","src/**/*.tsx","src/**/*.ts", "prisma/seed.js", "src/app/api/user/search-user/route.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts","src/**/*.tsx","src/**/*.ts", "prisma/seed.js", "src/app/api/user/search-user/route.js", "prisma/seeds.js"],
   "exclude": ["node_modules"]
 }

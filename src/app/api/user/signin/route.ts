@@ -6,9 +6,9 @@ import { generateAccessToken, generateRefreshToken } from "../../../../../utils/
 import { cookies, headers } from "next/headers";
 
 export async function POST(req: NextRequest) {
-    const { email, userName, password} = await req.json()
+    const { emailOrUsername, password } = await req.json()
     try {
-        if (!(email || userName || password)) {
+        if (!(emailOrUsername || password)) {
             return NextResponse.json({
                 error: "Please provide all the required fields",
             }, {
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
         await connectDatabase()
         const user = await prisma.user.findFirst({
             where: {
-                OR: [{ email }, { userName }]
+                OR: [{ email: emailOrUsername }, { userName: emailOrUsername }]
             },
             select: {
                 id: true,

@@ -5,11 +5,8 @@ import { generateAccessToken } from "../../../../../utils/generateTokens";
 import { cookies } from "next/headers";
 
 export async function POST(req: NextRequest, res: NextResponse) {
-    // const refreshToken = await req.cookies.get("refreshToken")?.value 
 
-    // const accessToken = await req.cookies.get("accessToken")?.value
     const { refreshToken, accessToken } = await req.json()
-    // if (!accessToken) {
     if (refreshToken) {
         const { payload: decodedToken } = await jose.jwtVerify(refreshToken, new TextEncoder().encode(process.env.REFRESH_TOKEN_SECRET))
         if (decodedToken && decodedToken.id) {
@@ -64,7 +61,4 @@ export async function POST(req: NextRequest, res: NextResponse) {
             status: 401
         })
     }
-    // } else {
-    // return NextResponse.json({})
-    // }
 }

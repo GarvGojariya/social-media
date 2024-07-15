@@ -8,9 +8,11 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { API } from '@/app/lib/axios';
 import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
+import Loader from '@/app/components/Loader';
 
 interface SignUpData {
-    email: string ;
+    email: string;
     password: string;
     name: string;
     userName: string;
@@ -31,6 +33,8 @@ const page = () => {
     })
     const [loading, setLoading] = useState<boolean>(false)
 
+    const router = useRouter()
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         setLoading(true)
         event.preventDefault();
@@ -50,7 +54,8 @@ const page = () => {
             setUploadedImageUrl("")
             console.log(response)
             setLoading(false)
-            toast.success(response.data?.message ?? "Signup success");
+            router.push("/login")
+            toast.success(response.data?.message ?? "Signup successfully please check mail to verify your account.");
         } catch (error: any) {
             await setSignUpData({
                 email: "",
@@ -84,7 +89,7 @@ const page = () => {
                 sx={{ color: '#fff', zIndex: 10 }}
                 open={loading}
             >
-                <CircularProgress color="inherit" />
+                <Loader/>
             </Backdrop>
             <Box
                 sx={{

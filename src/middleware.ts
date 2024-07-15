@@ -7,11 +7,11 @@ import { cookies } from "next/headers";
 export async function middleware(req: NextRequest) {
     try {
         const path = req.nextUrl.pathname;
-        const isPublicPath = ["/login", "/register", "/verify", "/verify/"].includes(path);
+        const isPublicPath = ["/login", "/register", "/verify"].some((publicPath) =>
+            path.startsWith(publicPath)
+        );
         const accessToken = req.cookies.get("accessToken")?.value;
         const refreshToken = req.cookies.get("refreshToken")?.value;
-
-        console.log({ accessToken });
 
         if (accessToken) {
             try {
