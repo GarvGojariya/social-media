@@ -41,6 +41,7 @@
     "styled-components": "^6.1.11"
   },
   "devDependencies": {
+    "@svgr/webpack": "^8.1.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.14.9",
     "@types/nodemailer": "^6.4.15",

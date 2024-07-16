@@ -1,5 +1,4 @@
-import { Button, Card, CardHeader, Typography } from '@mui/material'
-import Image from 'next/image';
+import { Avatar, Button, Card, CardHeader, Typography } from '@mui/material'
 import React from 'react'
 
 interface UserCardProps {
@@ -20,8 +19,16 @@ const UserCard = ({
     return (
         <Card sx={{ maxWidth: 345, m: 2 }} key={`${id}_profilecard`}>
             <CardHeader
+                sx={{
+                    "& img": {
+                        height: "100px",
+                        width: "100px",
+                    }
+                }}
                 avatar={
-                    <Image src={profileImage} alt='User Image' />
+                    <Avatar aria-label="recipe">
+                        <img src={profileImage} alt='User Image' />
+                    </Avatar>
                 }
                 action={
                     <Button>{isFollowed ? "Following" : "Follow"}</Button>
