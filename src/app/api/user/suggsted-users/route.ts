@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
                     status: 404
                 })
             }
+            
 
             const connectedUsers = [
                 ...user.followers?.map((follower) => follower.followedById),
