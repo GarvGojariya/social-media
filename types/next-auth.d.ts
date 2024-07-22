@@ -10,22 +10,10 @@ declare module "next-auth" {
         profileImage?: string;
     }
     interface Session {
-        user: {
-            id?: string;
-            email?: string;
-            name?: string;
-            userName?: string;
-            profileImage?: string;
-        } & DefaultSession["user"];
+        user: User & DefaultSession["user"];
     }
 }
 
 declare module "next-auth/jwt" {
-    interface JWT {
-        id?: string;
-        email?: string;
-        name?: string;
-        userName?: string;
-        profileImage?: string;
-    }
+    interface JWT extends Partial<User> {}
 }
