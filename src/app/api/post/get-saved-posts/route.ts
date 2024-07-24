@@ -20,8 +20,12 @@ export async function GET(req: NextRequest) {
                             include: {
                                 post: {
                                     include: {
-                                        likes: true,
-                                        comments: true
+                                        _count: {
+                                            select: {
+                                                comments: true,
+                                                likes: true
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -29,7 +33,9 @@ export async function GET(req: NextRequest) {
                     }
                 })
                 if (user) {
-                    return NextResponse.json(user.savedPosts.map((savedPost) => savedPost.post))
+                    return NextResponse.json({
+                        savedPosts: user.savedPosts.map((savedPost) => savedPost.post)
+                    })
                 } else {
                     return NextResponse.json({
                         error: "User not found"

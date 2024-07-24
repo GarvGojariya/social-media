@@ -95,6 +95,12 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({
                 success: true,
                 message: "User logged in successfuly",
+                user: {
+                    id: user.id,
+                    name: user.name,
+                    userName: user.userName,
+                    profileImage: user.profileImage
+                }
             }, { status: 200 })
         }
     } catch (error: any) {

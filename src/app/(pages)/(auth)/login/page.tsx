@@ -21,16 +21,30 @@ const page = () => {
     const [emailOrUsername, setEmailOrUsername] = useState<string>("")
 
     const router = useRouter()
+    const session = useSession()
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         setLoading(true)
         event.preventDefault();
         try {
             const response = await API.post("/api/user/signin", { emailOrUsername: emailOrUsername, password: password });
-            console.log(response);
+            // console.log(response);
+            //    const res = await signIn("credentials", {
+            //         emailOrUsername: emailOrUsername,
+            //         password: password,
+            //         redirect: false
+            //     })
+            //     console.log(res)
+            // session.data = response?.data?.user
             setEmailOrUsername("");
             setPassword("");
-            router.push("/");
+            sessionStorage.setItem("userData", JSON.stringify({
+                id: response.data.user.id,
+                name: response.data.user.name,
+                userName: response.data.user.userName,
+                profileImage: response.data.user.profileImage
+            }))
+            await router.push("/");
             setLoading(false)
             toast.success(response.data?.message ?? "Login success");
         } catch (error: any) {
@@ -41,6 +55,7 @@ const page = () => {
             toast.error(error?.response?.data?.error ?? "Login failed");
         }
     };
+
     return (
         <Box
             sx={{

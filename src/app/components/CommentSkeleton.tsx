@@ -1,7 +1,7 @@
-import { Card, CardContent, CardHeader, IconButton, Skeleton } from '@mui/material'
+import { Card, CardHeader, Skeleton } from '@mui/material'
 import React from 'react'
 
-const UserSkeleton = () => {
+const CommentSkeleton = () => {
     return (
         <Card sx={{
             width: "100%", minWidth: "200px", bgcolor: "#ffffff", boxShadow: "unset", borderBottom: "1px solid #eeeeee", margin: 0, "& .MuiSkeleton-root:after": {
@@ -41,4 +41,4 @@ const UserSkeleton = () => {
     )
 }
 
-export default UserSkeleton
+export default CommentSkeleton

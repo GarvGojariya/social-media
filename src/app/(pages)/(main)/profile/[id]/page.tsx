@@ -3,11 +3,12 @@ import { API } from '@/app/lib/axios';
 import { Avatar, Backdrop, Box, Button, ImageList, ImageListItem, Skeleton, Tab, Tabs, Typography } from '@mui/material'
 import React, { ReactNode, useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
-import { Follower, Following, ProfileData, savedPost } from '../../../../../types/globalTypes';
 import Loader from '@/app/components/Loader';
 import ProfileSkeleton from '@/app/components/ProfileSkeleton';
 import UserSkeleton from '@/app/components/UserSkeleton';
 import UserCard from '@/app/components/UserCard';
+import { Follower, Following, ProfileData, savedPost } from '../../../../../../types/globalTypes';
+import { useParams } from 'next/navigation';
 
 interface TabPanelProps {
     children: ReactNode;
@@ -23,11 +24,8 @@ interface loading {
 }
 
 const page = () => {
-    const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => (
-        <div role="tabpanel" hidden={value !== index}>
-            {value === index && <Box p={3}>{children}</Box>}
-        </div>
-    );
+    const params = useParams()
+    const userId = params.id
 
     const [value, setValue] = useState(0);
     const [loading, setLoading] = useState<loading>({
@@ -41,17 +39,25 @@ const page = () => {
     const [following, setFollowing] = useState<Following[]>([] as Following[])
     const [followerPageNo, setfollowerPageNo] = useState<number>(1)
     const [followingPageNo, setFollowingPageNo] = useState<number>(1)
-    const [savedPosts, setSavedPosts] = useState<savedPost[]>([])
     const [totalFollowers, setTotalFollowers] = useState<number>(0)
+    const [isFollowed, setIsFollowed] = useState<boolean>(false)
+
+    const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => (
+        <div role="tabpanel" hidden={value !== index}>
+            {value === index && <Box p={3}>{children}</Box>}
+        </div>
+    );
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
 
-    const getCurrentUserData = async () => {
+    const getUserData = async () => {
         try {
-            const response = await API.get("/api/user/get-current-user")
-            setProfileData(response.data.user ?? {})
+            const response = await API.get(`/api/user/get-user?userId=${userId}`)
+            console.log(response.data)
+            setProfileData(response.data?.data.user ?? {})
+            setIsFollowed(response.data?.data?.following)
             setLoading({
                 ...loading,
                 profileDataLoading: false,
@@ -116,46 +122,21 @@ const page = () => {
         try {
             const response = await API.post(`/api/follow/create?opponentId=${id}`)
             toast.success(response.data.message)
-            getUserFollowers()
-            getUserFollowing()
         } catch (error: any) {
             console.log(error)
             toast.error(error?.response?.data?.error ?? "Something went wrong please try again.")
         }
     }
 
-    const getSavedPosts = async () => {
-        try {
-            setLoading({
-                ...loading,
-                savedPostsLoading: true,
-            })
-            const response = await API.get("/api/post/get-saved-posts")
-            setSavedPosts(response.data.savedPosts)
-            setLoading({
-                ...loading,
-                savedPostsLoading: false,
-            })
-        } catch (error: any) {
-            toast.error(error?.response?.data?.error ?? "Something  went wrong while fetching saved posts.")
-            setLoading({
-                ...loading,
-                savedPostsLoading: false,
-            })
-        }
-    }
-
     useEffect(() => {
-        getCurrentUserData()
+        getUserData()
     }, [])
 
     useEffect(() => {
-        if (value === 2) {
+        if (value === 1) {
             getUserFollowing()
-        } else if (value === 3) {
+        } else if (value === 2) {
             getUserFollowers()
-        } else if (value === 1) {
-            getSavedPosts()
         }
     }, [profileData, value])
 
@@ -238,9 +219,32 @@ const page = () => {
                         gap: "12px",
                         alignItems: "start"
                     }}>
-                        <Typography>
-                            {profileData?.name}
-                        </Typography>
+                        <Box sx={{
+                            display: "flex",
+                            flexDirection: "row",
+                            gap: "12px",
+                            alignItems: "center"
+                        }}>
+                            <Typography>
+                                {profileData?.name}
+                            </Typography>
+                            <Button variant='contained' sx={{
+                                color: "white",
+                                backgroundColor: "black",
+                                "&:hover": {
+                                    backgroundColor: "#777"
+                                },
+                                textTransform:"capitalize",
+                                borderRadius:"12px"
+                            }}
+                                onClick={async () => {
+                                    await toggleFollow(profileData.id)
+                                    await getUserData()
+                                }}
+                            >
+                                {isFollowed ? "Following" : "Follow"}
+                            </Button>
+                        </Box>
                         <Typography>
                             {profileData?.bio}
                         </Typography>
@@ -262,7 +266,6 @@ const page = () => {
                         aria-label="secondary tabs example"
                     >
                         <Tab label="Posts" />
-                        <Tab label="Saved" />
                         <Tab label="Following" />
                         <Tab label="Followers" />
                     </Tabs>
@@ -318,56 +321,6 @@ const page = () => {
                     </ImageList>
                 </TabPanel>
                 <TabPanel value={value} index={1}>
-                    <ImageList variant='quilted' sx={{
-                        width: "100%", overflowY: "auto",
-                        maxHeight: "450px"
-                    }} cols={3} rowHeight={164}>
-                        {loading.savedPostsLoading && (
-                            // <Box sx={{
-                            //     width: "100%",
-                            //     display: "flex",
-                            //     flexDirection: "column",
-                            // }}>
-                            <>
-                                {Array.from({ length: 6 }).map((_, index) => (
-                                    <ImageListItem sx={{
-                                        height: "250px !important"
-                                    }}
-                                        key={index}
-                                    >
-                                        <Skeleton width="100%" height="100%" variant='rectangular' animation="wave" key={index} />
-                                    </ImageListItem>
-                                ))}
-                            </>
-                            // </Box>
-                        )}
-                        {!loading.savedPostsLoading && savedPosts?.length === 0 &&
-                            <ImageListItem sx={{
-                                width: "100%",
-                                display: "flex",
-                                flexDirection: "column",
-                                gridColumnEnd:"span 3 !important"
-                            }}>
-                                <Typography variant='h6' sx={{ textAlign: "center", marginTop: "20px" }}>No posts found</Typography>
-                            </ImageListItem>
-                        }
-                        {!loading.savedPostsLoading && savedPosts?.map((item) => (
-                            <ImageListItem key={item.id} sx={{
-                                cursor: "pointer",
-                                height: "250px !important"
-                            }}>
-                                <img
-                                    onClick={() => { }}
-                                    srcSet={`${item.url}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-                                    src={`${item.url}?w=164&h=164&fit=crop&auto=format`}
-                                    alt={""}
-                                    loading='lazy'
-                                />
-                            </ImageListItem>
-                        ))}
-                    </ImageList>
-                </TabPanel>
-                <TabPanel value={value} index={2}>
                     {loading.followingLoading && (
                         <Box sx={{
                             width: "100%",
@@ -406,7 +359,7 @@ const page = () => {
                         </Box>
                     )}
                 </TabPanel>
-                <TabPanel value={value} index={3}>
+                <TabPanel value={value} index={2}>
                     {loading.followersLoading && (
                         <Box sx={{
                             width: "100%",

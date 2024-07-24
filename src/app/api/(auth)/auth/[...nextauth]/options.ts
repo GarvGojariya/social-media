@@ -19,9 +19,12 @@ export const authOptions: NextAuthOptions = {
             async authorize(credentials: any): Promise<any> {
                 await connectDatabase();
                 try {
-                    const user = await prisma?.user.findUnique({
+                    const user = await prisma?.user.findFirst({
                         where: {
-                            email: credentials?.email,
+                            OR: [
+                                { email: credentials.emailOrUsername },
+                                { userName: credentials.emailOrUsername }
+                            ]
                         },
                     });
                     if (!user) throw new Error("User not found");
@@ -32,29 +35,30 @@ export const authOptions: NextAuthOptions = {
                     if (!isValid) throw new Error("Invalid password");
                     if (!user.isVerified) {
                         const token = await generateEncryptedVarifyLink(user);
-                    const link = `${process.env.BASE_URL_FOR_WEB}/verify/${token.iv}/${token.encryptedData}`;
-                    try {
-                        await sendEmailWithVarifyLink(
-                            user.email,
-                            link,
-                            "Click the following link to complete your registration",
-                            "Registration Confirmation"
-                        );
-                        return NextResponse.json({
-                            success: true,
-                            message: "User updated successfully please check your email for verification",
-                            status: 200,
-                        })
-                    } catch (error) {
-                        return NextResponse.json({
-                            success: false,
-                            message: "Failed to send verification email",
-                            status: 500,
-                        });
-                    }
+                        const link = `${process.env.BASE_URL_FOR_WEB}/verify/${token.iv}/${token.encryptedData}`;
+                        try {
+                            await sendEmailWithVarifyLink(
+                                user.email,
+                                link,
+                                "Click the following link to complete your registration",
+                                "Registration Confirmation"
+                            );
+                            return NextResponse.json({
+                                success: true,
+                                message: "User updated successfully please check your email for verification",
+                                status: 200,
+                            })
+                        } catch (error) {
+                            return NextResponse.json({
+                                success: false,
+                                message: "Failed to send verification email",
+                                status: 500,
+                            });
+                        }
                     }
                     return user;
                 } catch (error: any) {
+                    console.log({ error })
                     throw new Error(error.message);
                 }
             },

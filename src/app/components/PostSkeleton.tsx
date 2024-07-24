@@ -4,7 +4,11 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 const PostSkeleton = () => {
     return (
-        <Card sx={{ maxWidth: 345, m: 2 }}>
+        <Card sx={{
+            maxWidth: 345, m: 2, bgcolor: "#ffffff", "& .MuiSkeleton-root:after": {
+                background: "linear-gradient(90deg, transparent, rgb(167 162 162 / 8%), transparent)"
+            }
+        }}>
             <CardHeader
                 avatar={
                     <Skeleton animation="wave" variant="circular" width={40} height={40} />

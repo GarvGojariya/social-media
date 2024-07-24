@@ -29,42 +29,53 @@ export async function GET(req: NextRequest) {
                 status: 404
             })
         } else {
-            const detailData = await prisma.follows.findMany({
-                where: {
-                    followingId: userId
-                },
-                skip: (parseInt(pageNo) - 1) * limit,
-                take: limit,
-                include: {
-                    followedBy: {
-                        select: {
-                            id: true,
-                            name: true,
-                            profileImage: true,
-                            userName: true,
-                            followers: {
-                                where: {
-                                    followedById: userId,
+            const [detailData, totalCount] = await Promise.all([
+                prisma.follows.findMany({
+                    where: {
+                        followingId: userId,
+                    },
+                    include: {
+                        followedBy: {
+                            select: {
+                                id: true,
+                                name: true,
+                                profileImage: true,
+                                userName: true,
+                                followers: {
+                                    where: {
+                                        followedById: userId,
+                                    },
+                                    select: {
+                                        followedById: true,
+                                    },
                                 },
-                                select: {
-                                    followedById: true
-                                }
-                            }
-                        }
-                    }
-                }
-            });
+                            },
+                        },
+                    },
+                    // skip: (parseInt(pageNo) - 1) * limit,
+                    // take: limit,
+                }),
+                prisma.follows.count({
+                    where: {
+                        followingId: userId,
+                    },
+                }),
+            ]);
+
             const data: any = await detailData
             await data.map((d: any) => {
-                if (d.followedBy.followers[0].followedById == userId) {
+                if (d.followedBy?.followers[0]?.followedById == userId) {
                     d.followedBy.isFollowed = true
+                    delete d.followedBy?.followers
+                } else {
+                    d.followedBy.isFollowed = false
+                    delete d.followedBy?.followers
                 }
             }
             )
-
             return NextResponse.json({
                 followers: data,
-                // agg
+                totalCount
             })
         }
 

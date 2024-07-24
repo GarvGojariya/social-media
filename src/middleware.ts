@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as jose from "jose";
-import axios from "axios";
 import { API } from "./app/lib/axios";
-import { cookies } from "next/headers";
 
 export async function middleware(req: NextRequest) {
     try {
@@ -25,8 +23,8 @@ export async function middleware(req: NextRequest) {
                 };
 
                 const response = NextResponse.next();
-                response.headers.set("x-user-id", user.id as string);
-                response.headers.set("x-user-email", user.email as string);
+                // response.headers.set("x-user-id", user.id as string);
+                // response.headers.set("x-user-email", user.email as string);
                 if (isPublicPath) {
                     return NextResponse.redirect(new URL("/", req.nextUrl));
                 }
@@ -93,5 +91,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/", "/login", "/register", "/verify/:path*"],
+    matcher: ["/", "/login", "/register", "/verify/:path*","/profile"],
 };

@@ -32,8 +32,8 @@ export async function GET(req: NextRequest) {
                 where: {
                     followedById: userId
                 },
-                skip: (parseInt(pageNo) - 1) * limit,
-                take: limit,
+                // skip: (parseInt(pageNo) - 1) * limit,
+                // take: limit,
                 include: {
                     following: {
                         select: {
