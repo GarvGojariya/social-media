@@ -8,11 +8,11 @@ import { useEffect, useState } from "react";
 import { Post } from "../../../../types/globalTypes";
 import toast from "react-hot-toast";
 import InfiniteScroll from "react-infinite-scroll-component";
-import PostSkeleton from "@/app/components/PostSkeleton";
-import PostCard from "@/app/components/PostCard";
-import Loader from "@/app/components/Loader";
-import CommentCard from "@/app/components/CommentCard";
-import CommentModel from "@/app/components/CommentModel";
+import PostSkeleton from "@/app/component/PostSkeleton";
+import PostCard from "@/app/component/PostCard";
+import Loader from "@/app/component/Loader";
+import CommentCard from "@/app/component/CommentCard";
+import CommentModel from "@/app/component/CommentModel";
 // import PostSkeleton from "../../components/PostSkeleton";
 // import UserSkeleton from "../../components/UserSkeleton";
 

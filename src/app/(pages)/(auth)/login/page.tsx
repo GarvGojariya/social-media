@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import { API, instance } from "@/app/lib/axios"
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import Loader from "@/app/components/Loader";
+import Loader from "@/app/component/Loader";
 
 const Page = () => {
     const [password, setPassword] = useState<string | null>("")

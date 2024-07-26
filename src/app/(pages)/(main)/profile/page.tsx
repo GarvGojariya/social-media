@@ -4,10 +4,10 @@ import { Avatar, Backdrop, Box, Button, ImageList, ImageListItem, Skeleton, Tab,
 import React, { ReactNode, useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
 import { Follower, Following, ProfileData, savedPost } from '../../../../../types/globalTypes';
-import Loader from '@/app/components/Loader';
-import ProfileSkeleton from '@/app/components/ProfileSkeleton';
-import UserSkeleton from '@/app/components/UserSkeleton';
-import UserCard from '@/app/components/UserCard';
+import Loader from '@/app/component/Loader';
+import ProfileSkeleton from '@/app/component/ProfileSkeleton';
+import UserSkeleton from '@/app/component/UserSkeleton';
+import UserCard from '@/app/component/UserCard';
 
 interface TabPanelProps {
     children: ReactNode;

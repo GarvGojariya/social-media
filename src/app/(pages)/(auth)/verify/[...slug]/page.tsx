@@ -1,5 +1,5 @@
 "use client"
-import Loader from '@/app/components/Loader'
+import Loader from '@/app/component/Loader'
 import { API } from '@/app/lib/axios'
 import { frame1 } from '@/assets/images'
 import { Backdrop, Box, Button, CircularProgress, CssBaseline, Typography } from '@mui/material'

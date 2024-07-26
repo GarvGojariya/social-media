@@ -3,10 +3,10 @@ import { API } from '@/app/lib/axios';
 import { Avatar, Backdrop, Box, Button, ImageList, ImageListItem, Skeleton, Tab, Tabs, Typography } from '@mui/material'
 import React, { ReactNode, useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
-import Loader from '@/app/components/Loader';
-import ProfileSkeleton from '@/app/components/ProfileSkeleton';
-import UserSkeleton from '@/app/components/UserSkeleton';
-import UserCard from '@/app/components/UserCard';
+import Loader from '@/app/component/Loader';
+import ProfileSkeleton from '@/app/component/ProfileSkeleton';
+import UserSkeleton from '@/app/component/UserSkeleton';
+import UserCard from '@/app/component/UserCard';
 import { Follower, Following, ProfileData, savedPost } from '../../../../../../types/globalTypes';
 import { useParams } from 'next/navigation';
 

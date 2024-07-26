@@ -9,7 +9,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { API } from '@/app/lib/axios';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
-import Loader from '@/app/components/Loader';
+import Loader from '@/app/component/Loader';
 
 interface SignUpData {
     email: string;

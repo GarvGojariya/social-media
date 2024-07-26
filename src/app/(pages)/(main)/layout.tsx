@@ -1,10 +1,10 @@
 "use client"
 import React, { ReactNode, useEffect, useRef, useState } from 'react'
-import Sidebar from '../../components/Sidebar'
+import Sidebar from '../../component/Sidebar'
 import { Box, createTheme, outlinedInputClasses, ThemeProvider } from '@mui/material'
 import "@/app/globals.css"
-import RightSidebar from '@/app/components/RightSidebar'
-import Header from '@/app/components/Header'
+import RightSidebar from '@/app/component/RightSidebar'
+import Header from '@/app/component/Header'
 
 export const theme = createTheme({
     palette: {
