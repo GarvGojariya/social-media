@@ -77,7 +77,7 @@ export const theme = createTheme({
     },
 })
 
-const layout = ({ children }: { children: ReactNode }) => {
+const Layout = ({ children }: { children: ReactNode }) => {
 
     const headerRef = useRef<HTMLDivElement>(null);
     const [headerHeight, setHeaderHeight] = useState(0);
@@ -117,4 +117,4 @@ const layout = ({ children }: { children: ReactNode }) => {
     )
 }
 
-export default layout
+export default Layout
