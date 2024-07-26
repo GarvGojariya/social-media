@@ -23,7 +23,7 @@ interface loading {
     savedPostsLoading: boolean;
 }
 
-const page = () => {
+const Page = () => {
     const params = useParams()
     const userId = params.id
 
@@ -403,4 +403,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

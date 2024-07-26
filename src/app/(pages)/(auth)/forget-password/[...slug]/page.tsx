@@ -9,7 +9,7 @@ import toast from 'react-hot-toast'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
-const page = ({ params }: any) => {
+const Page = ({ params }: any) => {
     const [iv, encryptedData] = params.slug
     const [loading, setLoading] = useState<boolean>(false)
     const [password, setPassword] = useState<string>("")
@@ -139,4 +139,4 @@ const page = ({ params }: any) => {
     )
 }
 
-export default page
+export default Page

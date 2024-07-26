@@ -6,7 +6,7 @@ import { Backdrop, Box, Button, CssBaseline, Grid, TextField, Typography } from 
 import React, { useState } from 'react'
 import toast from 'react-hot-toast'
 
-const page = () => {
+const Page = () => {
     const [loading, setLoading] = useState<boolean>(false)
     const [email, setEmail] = useState<string>("")
 
@@ -95,4 +95,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

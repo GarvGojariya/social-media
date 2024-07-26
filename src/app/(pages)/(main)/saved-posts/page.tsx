@@ -1,6 +1,6 @@
 import React from 'react'
 
-const page = () => {
+const Page = () => {
     return (
         <div>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum nemo alias culpa aliquid repella
@@ -8,4 +8,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

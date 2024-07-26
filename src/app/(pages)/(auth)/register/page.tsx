@@ -20,7 +20,7 @@ interface SignUpData {
     bio: string;
 }
 
-const page = () => {
+const Page = () => {
     const [uploadedImageUrl, setUploadedImageUrl] = useState<string>("");
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false)
     const [signUpData, setSignUpData] = useState<SignUpData>({
@@ -281,4 +281,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

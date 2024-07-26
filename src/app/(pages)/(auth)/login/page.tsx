@@ -14,7 +14,7 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import Loader from "@/app/components/Loader";
 
-const page = () => {
+const Page = () => {
     const [password, setPassword] = useState<string | null>("")
     const [loading, setLoading] = useState<boolean>(false)
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false)
@@ -163,4 +163,4 @@ const page = () => {
     );
 };
 
-export default page;
+export default Page;
