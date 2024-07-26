@@ -1,3 +1,4 @@
+import { formatDistanceToNow } from 'date-fns';
 import { DecodedToken } from "../verifyToken";
 import * as jose from "jose"
 
@@ -55,9 +56,16 @@ const getCurrentUserData = async () => {
 }
 
 
+const getDateTimeFromNow =  (dateString: string) => {
+    const createdAt = new Date(dateString);
+    const timeAgo =  formatDistanceToNow(createdAt, { addSuffix: true });
+    return timeAgo
+}
+
 export {
     formatDate,
     getCookie,
     decodeToken,
-    getCurrentUserData
+    getCurrentUserData,
+    getDateTimeFromNow
 }

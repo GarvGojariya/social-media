@@ -84,4 +84,28 @@ export interface Comment {
         profileImage: string;
     };
     isLiked:boolean;
+    _count:{
+        likes:number;
+    }
+}
+
+export interface Post {
+        id:string;
+        url: string;
+        caption:string;
+        ownerId: string;
+        createdAt:string;
+        updatedAt: string;
+        _count: {
+            likes: number;
+            comments: number;
+        },
+        owner: {
+            id: string;
+            userName: string;
+            name:string;
+            profileImage: string;
+        },
+        isLiked: boolean;
+        isSaved: boolean;
 }

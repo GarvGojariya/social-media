@@ -22,7 +22,7 @@ interface loading {
     savedPostsLoading: boolean;
 }
 
-const page = () => {
+const Page = () => {
     const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => (
         <div role="tabpanel" hidden={value !== index}>
             {value === index && <Box p={3}>{children}</Box>}
@@ -450,4 +450,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

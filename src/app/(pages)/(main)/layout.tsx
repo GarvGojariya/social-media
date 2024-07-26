@@ -1,5 +1,5 @@
 "use client"
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useEffect, useRef, useState } from 'react'
 import Sidebar from '../../components/Sidebar'
 import { Box, createTheme, outlinedInputClasses, ThemeProvider } from '@mui/material'
 import "@/app/globals.css"
@@ -78,6 +78,16 @@ export const theme = createTheme({
 })
 
 const layout = ({ children }: { children: ReactNode }) => {
+
+    const headerRef = useRef<HTMLDivElement>(null);
+    const [headerHeight, setHeaderHeight] = useState(0);
+
+    useEffect(() => {
+        if (headerRef.current) {
+            setHeaderHeight(headerRef.current.offsetHeight);
+        }
+    }, []);
+
     return (
         <ThemeProvider theme={theme}>
             <Box sx={{
@@ -92,11 +102,11 @@ const layout = ({ children }: { children: ReactNode }) => {
                     flexDirection: "column",
                     width: "100%"
                 }}>
-                    <Header />
+                    <Header ref={headerRef} key="header" />
                     <Box sx={{
                         display: 'flex',
                         width: "100%",
-                        height:"calc(100% - 72.5px)"
+                        height: `calc(100% - ${headerHeight}px)`
                     }}>
                         {children}
                         <RightSidebar />

@@ -2,101 +2,105 @@
 import Image from "next/image";
 import styles from "../../page.module.css";
 import { useSession } from "next-auth/react";
+import { Backdrop, Box } from "@mui/material";
+import { API } from "@/app/lib/axios";
+import { useEffect, useState } from "react";
+import { Post } from "../../../../types/globalTypes";
+import toast from "react-hot-toast";
+import InfiniteScroll from "react-infinite-scroll-component";
+import PostSkeleton from "@/app/components/PostSkeleton";
+import PostCard from "@/app/components/PostCard";
+import Loader from "@/app/components/Loader";
+import CommentCard from "@/app/components/CommentCard";
+import CommentModel from "@/app/components/CommentModel";
 // import PostSkeleton from "../../components/PostSkeleton";
 // import UserSkeleton from "../../components/UserSkeleton";
 
 export default function Home() {
 
-  const session = useSession()
-console.log({session})
+  const [pageNo, setPageNo] = useState<number>(1)
+  const [postsData, setPostsData] = useState<Post[]>([])
+  const [totalPosts, setTotalPosts] = useState<number>(0)
+  const [hasMore, setHasMore] = useState<boolean>(true)
+  const [loading, setLoading] = useState<boolean>(true)
+  const [isCommentBoxOpen, setIsCommentBoxOpen] = useState<boolean>(false)
+  const [postId, setPostId] = useState<string>("")
+
+  const fetchPosts = async () => {
+    try {
+      const response = await API.get(`/api/post/fetch-posts?pageNo=${pageNo}`)
+      const { posts, totalPosts } = response.data
+      setPostsData(posts)
+      setTotalPosts(totalPosts)
+      setLoading(false)
+      toast.success(response.data?.message)
+    } catch (error: any) {
+      console.log(error)
+      setLoading(false)
+      toast.error(error?.response?.data?.error ?? "Something  went wrong while fetch post.")
+    }
+  }
+
+  const fetchNextPage = async () => {
+    try {
+      const response = await API.get(`/api/post/fetch-posts?pageNo=${pageNo + 1}`);
+      const { posts, totalPosts: newTotalPosts } = response.data;
+      setPostsData([...postsData, ...posts]);
+      setTotalPosts(newTotalPosts); // Update totalPosts here
+      setPageNo(pageNo + 1);
+      // toast.success(response.data?.message);
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error?.response?.data?.error ?? "Something went wrong while fetching posts.");
+    }
+  }
+
+  useEffect(() => {
+    fetchPosts()
+  }, [])
+
+  useEffect(() => {
+    setHasMore(postsData.length < totalPosts);
+  }, [postsData, totalPosts]);
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
+    <>
+      <Box sx={{
+        paddingX: "32px",
+        paddingY: "16px",
+        height: "100%",
+        overflowY: "auto",
+        width:"100%"
+      }}
+        id="scrollableDiv">
+        {/* <Backdrop open={loading}>
+        <Loader />
+      </Backdrop> */}
+        {
+          loading && Array.from({ length: 2 }).map((_, index) => (
+            <PostSkeleton key={index} />
+          ))
+        }
+        {!loading && <InfiniteScroll
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "24px"
+          }}
+          endMessage={"You have all caught!"}
+          dataLength={postsData.length}
+          hasMore={hasMore}
+          loader={<PostSkeleton />}
+          next={fetchNextPage}
+          scrollableTarget="scrollableDiv"
         >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+          {
+            postsData.map((post: any, index: number) => (
+              <PostCard postData={post} key={index} />
+            ))
+          }
+        </InfiniteScroll>}
+      </Box>
+    </>
   );
 }

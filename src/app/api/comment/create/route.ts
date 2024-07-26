@@ -37,17 +37,34 @@ export async function POST(req: NextRequest) {
                     status: 404
                 })
             }
-            await prisma.comment.create({
+            const comment = await prisma.comment.create({
                 data: {
                     text,
                     postId,
                     ownerId: decodedToken.id
+                },
+                include: {
+                    owner: {
+                        select: {
+                            id: true,
+                            name: true,
+                            userName: true,
+                            profileImage: true
+                        }
+                    }
                 }
             })
             const post = await getPostDetails(postId)
             return NextResponse.json({
                 message: "comment created successfully",
-                post
+                post,
+                comment:{
+                    ...comment,
+                    isLiked:false,
+                    _count:{
+                        likes:0
+                    }
+                }
             }, {
                 status: 201
             })

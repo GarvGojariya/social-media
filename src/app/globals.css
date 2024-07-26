@@ -18,6 +18,20 @@ div {
     box-sizing: border-box;
 }
 
-svg{
+svg {
     flex-shrink: 0;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgb(128, 128, 128, 0.45);
+    border-radius: 5px;
 }

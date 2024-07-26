@@ -1,6 +1,6 @@
 "use client"
 import { Box, Button, IconButton, InputAdornment, TextField, Typography } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React, { forwardRef, useEffect, useState } from 'react'
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import { SearchRounded } from '@mui/icons-material';
 import toast from 'react-hot-toast';
@@ -15,7 +15,7 @@ interface UserData {
     userName: string;
 }
 
-const Header = () => {
+const Header = forwardRef<HTMLDivElement>((props,ref) => {
     const [profileData, setProfileData] = useState<UserData>({} as UserData)
     const [loading, setLoading] = useState<boolean>(true)
     const [searchName, setSearchName] = useState("")
@@ -51,6 +51,8 @@ const Header = () => {
 
     return (
         <Box
+            ref={ref}
+            id='header'
             component="nav"
             sx={{
                 display: 'flex',
@@ -60,7 +62,8 @@ const Header = () => {
                 position: "sticky",
                 zIndex: '2',
                 bgcolor: "#f7f7f7",
-                top: 0
+                top: 0,
+                borderBottom: "1px solid #d9d9d9"
             }}
         >
             <Typography variant="body1">Hello, {profileData.name} 👋</Typography>
@@ -113,6 +116,6 @@ const Header = () => {
             </Box>
         </Box >
     )
-}
+})
 
 export default Header

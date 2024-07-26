@@ -5,7 +5,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 const PostSkeleton = () => {
     return (
         <Card sx={{
-            maxWidth: 345, m: 2, bgcolor: "#ffffff", "& .MuiSkeleton-root:after": {
+            width: "100%", m: 2, bgcolor: "#ffffff", "& .MuiSkeleton-root:after": {
                 background: "linear-gradient(90deg, transparent, rgb(167 162 162 / 8%), transparent)"
             }
         }}>

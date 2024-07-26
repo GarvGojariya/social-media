@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
     const params = req.nextUrl.searchParams
     const postId = await params.get("postId")
     const pageNo = await params.get("pageNo")
-    const limit = 20
+    const limit = 10
     if (!postId || !pageNo) {
         return NextResponse.json({
             message: "Invalid request parameteres"
@@ -47,6 +47,11 @@ export async function GET(req: NextRequest) {
                         likes: {
                             where: {
                                 ownerId: decodedToken.id
+                            }
+                        },
+                        _count: {
+                            select: {
+                                likes: true
                             }
                         }
                     }
