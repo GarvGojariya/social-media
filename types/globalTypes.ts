@@ -54,6 +54,7 @@ export interface Following {
         name: string;
         profileImage: string;
         userName: string;
+        isFollowed: boolean;
     }
 }
 
@@ -83,29 +84,53 @@ export interface Comment {
         userName: string;
         profileImage: string;
     };
-    isLiked:boolean;
-    _count:{
-        likes:number;
+    isLiked: boolean;
+    _count: {
+        likes: number;
     }
 }
 
 export interface Post {
-        id:string;
+    id: string;
+    url: string;
+    caption: string;
+    ownerId: string;
+    createdAt: string;
+    updatedAt: string;
+    _count: {
+        likes: number;
+        comments: number;
+    },
+    owner: {
+        id: string;
+        userName: string;
+        name: string;
+        profileImage: string;
+    },
+    isLiked: boolean;
+    isSaved: boolean;
+}
+
+export interface SavedPost {
+    id: string;
+    ownerId: string;
+    postId: string;
+    post: {
+        id: string;
         url: string;
-        caption:string;
+        caption: string;
         ownerId: string;
-        createdAt:string;
+        createdAt: string;
         updatedAt: string;
         _count: {
-            likes: number;
-            comments: number;
-        },
-        owner: {
-            id: string;
-            userName: string;
-            name:string;
-            profileImage: string;
-        },
-        isLiked: boolean;
-        isSaved: boolean;
+            comments: number,
+            likes: number
+        }
+    },
+    owner: {
+        id: string;
+        name: string;
+        userName: string;
+        profileImage: string;
+    }
 }

@@ -12,7 +12,6 @@ import PostSkeleton from "@/app/component/PostSkeleton";
 import PostCard from "@/app/component/PostCard";
 import Loader from "@/app/component/Loader";
 import CommentCard from "@/app/component/CommentCard";
-import CommentModel from "@/app/component/CommentModel";
 // import PostSkeleton from "../../components/PostSkeleton";
 // import UserSkeleton from "../../components/UserSkeleton";
 
@@ -23,8 +22,6 @@ export default function Home() {
   const [totalPosts, setTotalPosts] = useState<number>(0)
   const [hasMore, setHasMore] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(true)
-  const [isCommentBoxOpen, setIsCommentBoxOpen] = useState<boolean>(false)
-  const [postId, setPostId] = useState<string>("")
 
   const fetchPosts = async () => {
     try {

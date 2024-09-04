@@ -1,6 +1,6 @@
 "use client"
 import { Box, Grid, Paper, Typography, Avatar, TextField, Button, IconButton } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Comment, Post } from '../../../types/globalTypes';
 import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
@@ -14,8 +14,9 @@ import MapsUgcRoundedIcon from '@mui/icons-material/MapsUgcRounded';
 import { getDateTimeFromNow } from '../../../utils/globalHelpers/globalHelpers';
 import { useRouter } from 'next/navigation';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { CancelRounded } from '@mui/icons-material';
 
-const PostCard = ({ postData }: { postData: Post }) => {
+const HorizontalPostCard = ({ postData, setIsPostOpen }: { postData: Post, setIsPostOpen: Dispatch<SetStateAction<boolean>> }) => {
 
     const [loading, setLoading] = useState(true);
     const [commentsData, setCommentsData] = useState<Comment[]>([]);
@@ -111,10 +112,10 @@ const PostCard = ({ postData }: { postData: Post }) => {
     };
 
     useEffect(() => {
-        if (isCommentBoxOpen) {
-            getPostComents();
-        }
-    }, [isCommentBoxOpen]);
+        // if (isCommentBoxOpen) {
+        getPostComents();
+        // }
+    }, []);
 
     useEffect(() => {
         if (postData && postData.createdAt) {
@@ -124,16 +125,31 @@ const PostCard = ({ postData }: { postData: Post }) => {
     }, [postData]);
 
     return (
-        <Paper elevation={3} sx={{ bgcolor: "transparent", boxShadow: "unset" }}>
+        <Paper elevation={3} sx={{ bgcolor: "transparent", boxShadow: "unset", position: "relative" }}>
+            <IconButton
+                sx={{
+                    position: "absolute",
+                    top: "10px",
+                    right: "10px",
+                }}
+                onClick={() => {
+                    setIsPostOpen(false)
+                }}>
+                <CancelRounded />
+            </IconButton>
             <Grid container sx={{
                 justifyContent: "center"
             }}>
                 <Grid item sx={{
                     bgcolor: "white",
                     borderRadius: "12px",
-                    boxShadow: "0px 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12)"
+                    boxShadow: "0px 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12)",
+                    display: "flex",
+                    alignItems: "center"
                 }}>
-                    <Box>
+                    <Box sx={{
+                        borderRight: "1px solid #d9d9d9"
+                    }}>
                         <Box sx={{ display: 'flex', alignItems: "center", padding: "8px" }}>
                             <Avatar sx={{ height: "30px", width: "30px" }} variant="circular" src={postData.owner.profileImage} alt="" />
                             <Button
@@ -145,7 +161,8 @@ const PostCard = ({ postData }: { postData: Post }) => {
                             </Button>
                             <Typography sx={{ fontSize: "14px" }}>{timeAgo}</Typography>
                         </Box>
-                        <img src={postData.url} alt={"post"} style={{ width: '700px' }} loading='lazy' />
+                        <img srcSet={`${postData.url}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                            src={`${postData.url}?w=164&h=164&fit=crop&auto=format`} alt={"post"} style={{ width: '700px' }} loading='lazy' />
                         <Box sx={{ display: 'flex' }}>
                             <Box>
                                 <IconButton onClick={togglePostLike}>
@@ -156,11 +173,11 @@ const PostCard = ({ postData }: { postData: Post }) => {
                                     }
                                 </IconButton>
                             </Box>
-                            <Box>
+                            {/* <Box>
                                 <IconButton onClick={() => setIsCommentBoxOpen(!isCommentBoxOpen)}>
                                     <MapsUgcRoundedIcon sx={{ height: "24px", width: "24px", color: "black" }} />
                                 </IconButton>
-                            </Box>
+                            </Box> */}
                             <Box>
                                 <IconButton onClick={toggleSavePost}>
                                     {isSaved ? <BookmarkRoundedIcon sx={{ height: "24px", width: "24px", color: "black" }} /> : <BookmarkBorderRoundedIcon sx={{ height: "24px", width: "24px", color: "black" }} />}
@@ -195,39 +212,40 @@ const PostCard = ({ postData }: { postData: Post }) => {
                             </Box>
                         </Box>
                     </Box>
-                    {isCommentBoxOpen &&
-                        <Box sx={{ maxHeight: "500px", overflowY: "auto" }}
-                            id='comments-box'
-                        >
-                            {loading && Array.from({ length: 4 }).map((_, index) => (
-                                <CommentSkeleton key={index} />
-                            ))}
-                            {!loading && commentsData.length === 0 && <Typography sx={{
-                                textAlign: "center",
-                                p: "14px"
-                            }}>No comments yet!</Typography>}
-                            {!loading && commentsData.length > 0 &&
-                                <InfiniteScroll
-                                    endMessage={<Typography sx={{
-                                        textAlign: "center",
-                                        p: "14px"
-                                    }}>You have all caught!</Typography>}
-                                    // height={450}
-                                    scrollableTarget="comments-box"
-                                    dataLength={commentsData.length}
-                                    next={fetchMoreComments}
-                                    hasMore={hasMore}
-                                    loader={<CommentSkeleton />}
-                                >
-                                    {commentsData.map((comment) => (
-                                        <CommentCard key={comment.id} postOwnerId={postData.ownerId} commentData={comment} onLikeToggle={handleLikeToggle} />
-                                    ))}
-                                </InfiniteScroll>}
-                        </Box>}
+                    {/* {isCommentBoxOpen && */}
+                    <Box sx={{ maxHeight: "600px", width: "400px", overflowY: "auto", height: "100%" }}
+                        id='comments-box'
+                    >
+                        {loading && Array.from({ length: 4 }).map((_, index) => (
+                            <CommentSkeleton key={index} />
+                        ))}
+                        {!loading && commentsData.length === 0 && <Typography sx={{
+                            textAlign: "center",
+                            p: "14px"
+                        }}>No comments yet!</Typography>}
+                        {!loading && commentsData.length > 0 &&
+                            <InfiniteScroll
+                                endMessage={<Typography sx={{
+                                    textAlign: "center",
+                                    p: "14px"
+                                }}>You have all caught!</Typography>}
+                                // height={450}
+                                scrollableTarget="comments-box"
+                                dataLength={commentsData.length}
+                                next={fetchMoreComments}
+                                hasMore={hasMore}
+                                loader={<CommentSkeleton />}
+                            >
+                                {commentsData.map((comment) => (
+                                    <CommentCard key={comment.id} commentData={comment} onLikeToggle={handleLikeToggle} />
+                                ))}
+                            </InfiniteScroll>}
+                    </Box>
+                    {/* } */}
                 </Grid>
             </Grid>
         </Paper>
     );
 };
 
-export default PostCard;
+export default HorizontalPostCard;
