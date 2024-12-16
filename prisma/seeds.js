@@ -1,124 +1,34 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
-
-// async function main() {
-//     const posts = [
-//         { url: 'https://res.cloudinary.com/dpd3gmgdk/image/upload/fl_preserve_transparency/v1721274293/samples/smile.jpg?_s=public-apps', caption: 'Smiling Face' },
-//         { url: 'https://res.cloudinary.com/dpd3gmgdk/image/upload/fl_preserve_transparency/v1721274293/samples/balloons.jpg?_s=public-apps', caption: 'Colorful Balloons' },
-//         { url: 'https://res.cloudinary.com/dpd3gmgdk/image/upload/fl_preserve_transparency/v1721274294/samples/man-on-a-street.jpg?_s=public-apps', caption: 'Man Walking on Street' },
-//         { url: 'https://res.cloudinary.com/dpd3gmgdk/image/upload/fl_preserve_transparency/v1721274295/cld-sample.jpg?_s=public-apps', caption: 'Artistic Portrait' },
-//         { url: 'https://res.cloudinary.com/dpd3gmgdk/image/upload/fl_preserve_transparency/v1721274293/samples/breakfast.jpg?_s=public-apps', caption: 'Delicious Breakfast' },
-//         { url: 'https://res.cloudinary.com/dpd3gmgdk/image/upload/fl_preserve_transparency/v1721274293/samples/outdoor-woman.jpg?_s=public-apps', caption: 'Woman Enjoying Outdoors' },
-//         { url: 'https://res.cloudinary.com/dpd3gmgdk/image/upload/fl_preserve_transparency/v1721274294/samples/coffee.jpg?_s=public-apps', caption: 'Morning Coffee' },
-//     ];
-
-//     for (const post of posts) {
-//         await prisma.post.create({
-//             data: {
-//                 ...post,
-//                 ownerId: "0c9af423-28db-4889-b8c9-9fa6f4e97909"
-//             },
-//         });
-//     }
-// }
-
-// main()
-//     .catch(e => {
-//         console.error(e);
-//         process.exit(1);
-//     })
-//     .finally(async () => {
-//         await prisma.$disconnect();
-//     });
-
-// async function main() {
-//     // Fetch a subset of users (e.g., 20 random users)
-//     const users = await prisma.user.findMany({
-//         take: 50,
-//         orderBy: {
-//             id: 'asc'
-//         }
-//     });
-
-//     if (users.length < 2) {
-//         console.error("Not enough users to create follow relationships");
-//         return;
-//     }
-
-//     // Create follow relationships
-//     const follows = [];
-//     const followPairs = new Set(); // To ensure no duplicate follow relationships
-
-//     users.forEach((followedBy) => {
-//         const followCount = Math.floor(Math.random() * (users.length - 1)) + 1; // Random number of follows for each user
-//         const shuffledUsers = users.sort(() => 0.5 - Math.random()); // Shuffle users
-
-//         for (let i = 0; i < followCount; i++) {
-//             const following = shuffledUsers[i];
-//             if (followedBy.id !== following.id && !followPairs.has(`${followedBy.id}-${following.id}`)) {
-//                 follows.push({
-//                     followedById: followedBy.id,
-//                     followingId: following.id
-//                 });
-//                 followPairs.add(`${followedBy.id}-${following.id}`);
-//             }
-//         }
-//     });
-
-//     // Insert follow relationships into the database
-//     for (const follow of follows) {
-//         await prisma.follows.create({
-//             data: follow
-//         });
-//     }
-
-//     console.log(`Created ${follows.length} follow relationships`);
-// }
-
-// main()
-//     .catch(e => {
-//         console.error(e);
-//         process.exit(1);
-//     })
-//     .finally(async () => {
-//         await prisma.$disconnect();
-//     });
-
 import { faker } from "@faker-js/faker"
 
-// async function main() {
-//     // Fetch all users
-//     const users = await prisma.user.findMany();
+//create users
+// async function seedUsers() {
+//     const users = [];
 
-//     const posts = [];
-
-//     // Generate posts for each user
-//     users.forEach(user => {
-//         const postCount = Math.floor(Math.random() * 10) + 1; // Random number of posts between 1 and 10 for each user
-
-//         for (let i = 0; i < postCount; i++) {
-//             posts.push({
-//                 url: faker.image.url(),
-//                 caption: faker.lorem.sentence(),
-//                 ownerId: user.id,
-//                 createdAt: faker.date.recent(30), // Posts from the last 30 days
-//                 updatedAt: new Date()
-//             });
-//         }
-//     });
-
-//     // Insert posts into the database
-//     for (const post of posts) {
-//         await prisma.post.create({
-//             data: post
+//     for (let i = 0; i < 20; i++) {
+//         users.push({
+//             id: faker.datatype.uuid(),
+//             userName: faker.internet.userName(),
+//             name: faker.name.fullName(),
+//             email: `${faker.internet.userName().toLowerCase()}@yopmail.com`,
+//             password: "$2a$10$DmjGRMW6Uakr1ympqcaij.RfMWFQ3YlbRzpRNR8sUorOO6ddsTcx.",
+//             birthDate: faker.date.birthdate({ min: 18, max: 60, mode: "age" }).toISOString().split("T")[0],
+//             profileImage: faker.image.avatar(),
+//             bio: faker.lorem.sentence(),
+//             isVerified: faker.datatype.boolean(),
 //         });
 //     }
 
-//     console.log(`Created ${posts.length} posts for ${users.length} users`);
+//     await prisma.user.createMany({
+//         data: users,
+//     });
+
+//     console.log("20 users created!");
 // }
 
-// main()
-//     .catch(e => {
+// seedUsers()
+//     .catch((e) => {
 //         console.error(e);
 //         process.exit(1);
 //     })
@@ -127,47 +37,99 @@ import { faker } from "@faker-js/faker"
 //     });
 
 
-async function main() {
-    const posts = await prisma.post.findMany();
-    const users = await prisma.user.findMany({
-        where: {
-            isVerified: {
-                equals: true,
-            },
-        },
-    });
+//create posts
 
-    const selectedPosts = posts.filter(() => Math.random() < 0.5); // 50% chance to select a post
-    const selectedUsers = users.filter(() => Math.random() < 0.5); // 50% chance to select a user
+const userIds = [
+  "0273f306-33ec-4aff-a877-9dd499f898f1",
+  "2a19560e-e651-464d-8846-48200013e595",
+  "2dadfd07-7efa-4b3a-a554-3a50b17d9b5c",
+  "5fe7f998-4d2d-4f5b-8804-5e8da2c55254",
+  "635b3c16-0721-4762-8319-1fc31e968d40",
+  "7c841666-9cb4-445a-8811-28135cabe01b",
+  "845b9d8a-5060-45ab-9458-a35c33582d6a",
+  "8a6f4c32-b37a-4886-9c98-073137583ea1",
+  "aed486b2-186b-475b-9008-d1fff717b61c",
+  "c44c85f5-f0b0-4218-99ef-3e6a98bd1914",
+];
 
-    for (const post of selectedPosts) {
-        const commentsCount = await prisma.comment.count({
-            where: { postId: post.id },
-        });
+// const createPosts = async () => {
+//   for (const userId of userIds) {
+//     for (let i = 0; i < 8; i++) {
+//       await prisma.post.create({
+//         data: {
+//           url: faker.image.imageUrl(800, 600, "nature", true), // Generates a unique image URL
+//           caption: faker.lorem.sentence(), // Generates a random caption
+//           ownerId: userId,
+//         },
+//       });
+//     }
+//   }
+// };
 
-        const commentsToAdd = Math.max(6 - commentsCount, 0);
+// const main = async () => {
+//   try {
+//     console.log("Seeding posts with unique images...");
+//     await createPosts();
+//     console.log("Seeding completed!");
+//   } catch (error) {
+//     console.error("Error seeding data:", error);
+//   } finally {
+//     await prisma.$disconnect();
+//   }
+// };
 
-        if (commentsToAdd > 0) {
-            const comments = Array.from({ length: commentsToAdd }).map(() => ({
-                text: faker.lorem.sentence(),
-                postId: post.id,
-                ownerId: selectedUsers[Math.floor(Math.random() * selectedUsers.length)].id, // Select a random user from the filtered list
-            }));
+// main();
 
-            await prisma.comment.createMany({
-                data: comments,
+
+
+///create followers and followings
+
+const createFollowersAndFollowings = async () => {
+    for (const userId of userIds) {
+        // Randomly select users to follow
+        const followingIds = faker.helpers.arrayElements(
+            userIds.filter((id) => id !== userId), // Exclude the current user
+            faker.datatype.number({ min: 2, max: 5 }) // Random number of followings
+        );
+
+        for (const followingId of followingIds) {
+            // Create a follow relationship
+            await prisma.follows.create({
+                data: {
+                    followedById: userId, // Current user is the follower
+                    followingId, // The user being followed
+                },
+            });
+        }
+
+        // Randomly select users to be followed by
+        const followerIds = faker.helpers.arrayElements(
+            userIds.filter((id) => id !== userId), // Exclude the current user
+            faker.datatype.number({ min: 2, max: 5 }) // Random number of followers
+        );
+
+        for (const followerId of followerIds) {
+            // Create a follow relationship
+            await prisma.follows.create({
+                data: {
+                    followedById: followerId, // The user who follows
+                    followingId: userId, // Current user is being followed
+                },
             });
         }
     }
+};
 
-    console.log('Comments added successfully.');
-}
-
-main()
-    .catch((e) => {
-        console.error(e);
-        process.exit(1);
-    })
-    .finally(async () => {
+const main = async () => {
+    try {
+        console.log("Seeding followers and followings...");
+        await createFollowersAndFollowings();
+        console.log("Seeding completed!");
+    } catch (error) {
+        console.error("Error seeding data:", error);
+    } finally {
         await prisma.$disconnect();
-    });
+    }
+};
+
+main();
