@@ -40,16 +40,15 @@ import { faker } from "@faker-js/faker"
 //create posts
 
 const userIds = [
-  "0273f306-33ec-4aff-a877-9dd499f898f1",
-  "2a19560e-e651-464d-8846-48200013e595",
-  "2dadfd07-7efa-4b3a-a554-3a50b17d9b5c",
-  "5fe7f998-4d2d-4f5b-8804-5e8da2c55254",
-  "635b3c16-0721-4762-8319-1fc31e968d40",
-  "7c841666-9cb4-445a-8811-28135cabe01b",
-  "845b9d8a-5060-45ab-9458-a35c33582d6a",
-  "8a6f4c32-b37a-4886-9c98-073137583ea1",
-  "aed486b2-186b-475b-9008-d1fff717b61c",
-  "c44c85f5-f0b0-4218-99ef-3e6a98bd1914",
+    "d54850d8-328d-4064-b3e5-366cc9a9b04e",
+    "764e3f90-6b21-46ef-b565-f514a00fb01b",
+    "7b69c25e-f1d7-4a59-8b4d-208f59eb0c12",
+    "e392a850-21c0-44a4-8a3e-01f71ef0f684",
+    "9d316893-397e-431e-bac7-28dfffb6df2f",
+    "8462caaa-7bc8-449e-93fb-f58dd8922a6a",
+    "5325c177-e98c-4df7-88cb-aebd073482f1",
+    "67dfde78-b57f-4269-a065-75bb63a6f9e2",
+    "16a0f836-e071-4289-b27c-e2230f61c8fb",
 ];
 
 // const createPosts = async () => {
