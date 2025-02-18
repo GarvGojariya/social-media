@@ -100,4 +100,6 @@ const ProfileSkeleton = () => {
     )
 }
 
+ProfileSkeleton.displayName = "ProfileSkeleton";
+
 export default ProfileSkeleton

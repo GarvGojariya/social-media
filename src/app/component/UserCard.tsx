@@ -67,4 +67,6 @@ const UserCard = ({
     )
 }
 
+UserCard.displayName = "UserCard";
+
 export default UserCard

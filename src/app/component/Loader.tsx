@@ -13,4 +13,6 @@ const Loader = () => {
     )
 }
 
+Loader.displayName = "Loader";
+
 export default Loader

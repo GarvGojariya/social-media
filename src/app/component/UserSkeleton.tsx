@@ -41,4 +41,6 @@ const UserSkeleton = () => {
     )
 }
 
+UserSkeleton.displayName = "UserSkeleton";
+
 export default UserSkeleton

@@ -343,4 +343,6 @@ const PostCard = ({ postData }: { postData: Post }) => {
   );
 };
 
+PostCard.displayName = "PostCard";
+
 export default PostCard;
