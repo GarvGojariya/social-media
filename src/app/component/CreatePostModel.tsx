@@ -162,6 +162,6 @@ const CreatePostModel = ({ setIsCreatePostModelOpen }: CreatePostProps) => {
   );
 };
 
-CommentSkeleton.displayName = "CommentSkeleton";
+CreatePostModel.displayName = "CreatePostModel";
 
 export default CreatePostModel;
