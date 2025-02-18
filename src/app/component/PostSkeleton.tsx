@@ -41,4 +41,6 @@ const PostSkeleton = () => {
     )
 }
 
+PostSkeleton.displayName = "PostSkeleton";
+
 export default PostSkeleton

@@ -128,4 +128,6 @@ const RightSidebar = () => {
     )
 }
 
+RightSidebar.displayName = "RightSidebar";
+
 export default RightSidebar

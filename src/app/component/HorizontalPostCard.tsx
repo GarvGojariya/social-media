@@ -248,4 +248,6 @@ const HorizontalPostCard = ({ postData, setIsPostOpen }: { postData: Post, setIs
     );
 };
 
+HorizontalPostCard.displayName = "HorizontalPostCard";
+
 export default HorizontalPostCard;
