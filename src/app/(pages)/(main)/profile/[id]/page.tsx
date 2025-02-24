@@ -61,7 +61,6 @@ const Page = () => {
     const getUserData = async () => {
         try {
             const response = await API.get(`/api/user/get-user?userId=${userId}`)
-            console.log(response.data)
             setProfileData(response.data?.data.user ?? {})
             setIsFollowed(response.data?.data?.following)
             setLoading({

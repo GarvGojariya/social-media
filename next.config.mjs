@@ -1,3 +1,5 @@
+import { hostname } from 'os';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     webpack(config) {
@@ -21,7 +23,13 @@ const nextConfig = {
 
         return config;
     },
-    crossOrigin:"use-credentials"
+    crossOrigin:"use-credentials",
+    images:{
+        remotePatterns:[{
+            protocol:"https",
+            hostname:"loremflickr.com",
+        }]
+    }
     
 }
 

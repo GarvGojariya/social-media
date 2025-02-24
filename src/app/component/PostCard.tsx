@@ -23,6 +23,8 @@ import MapsUgcRoundedIcon from "@mui/icons-material/MapsUgcRounded";
 import { getDateTimeFromNow } from "../../../utils/globalHelpers/globalHelpers";
 import { useRouter } from "next/navigation";
 import InfiniteScroll from "react-infinite-scroll-component";
+import Image from "next/image";
+import { ImageNotfound } from "@/assets/images";
 
 const PostCard = ({ postData }: { postData: Post }) => {
   const [loading, setLoading] = useState(true);
@@ -197,11 +199,16 @@ const PostCard = ({ postData }: { postData: Post }) => {
               </Button>
               <Typography sx={{ fontSize: "14px" }}>{timeAgo}</Typography>
             </Box>
-            <img
+            <Image
               src={postData.url}
               alt={"post"}
-              style={{ maxWidth: "500px" }}
               loading="lazy"
+              width={500}
+              height={500}
+              layout="responsive"
+              placeholder="blur"
+              blurDataURL={ImageNotfound.src}
+              style={{ objectFit: "cover", width: "100%", height: "100%" }} 
             />
             <Box sx={{ display: "flex" }}>
               <Box>
