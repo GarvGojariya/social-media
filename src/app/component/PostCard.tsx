@@ -175,6 +175,7 @@ const PostCard = ({ postData }: { postData: Post }) => {
             borderRadius: "12px",
             boxShadow:
               "0px 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12)",
+            width: "100%",
           }}
         >
           <Box>
@@ -205,10 +206,10 @@ const PostCard = ({ postData }: { postData: Post }) => {
               loading="lazy"
               width={500}
               height={500}
-              layout="responsive"
+              // layout="responsive"
               placeholder="blur"
               blurDataURL={ImageNotfound.src}
-              style={{ objectFit: "cover", width: "100%", height: "100%" }} 
+              style={{ objectFit: "contain",width:"100%"}} 
             />
             <Box sx={{ display: "flex" }}>
               <Box>
