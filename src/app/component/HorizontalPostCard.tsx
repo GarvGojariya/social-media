@@ -237,6 +237,7 @@ const HorizontalPostCard = ({
               placeholder="blur"
               blurDataURL={ImageNotfound.src}
               layout="responsive"
+              sizes="(max-width: 500px) 100%, 300px"
             />
             <Box sx={{ display: "flex" }}>
               <Box>
