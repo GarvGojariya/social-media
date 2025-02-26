@@ -25,6 +25,7 @@ import { useRouter } from "next/navigation";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { CancelRounded } from "@mui/icons-material";
 import Image from "next/image";
+import { ImageNotfound } from "@/assets/images";
 
 const HorizontalPostCard = ({
   postData,
@@ -234,7 +235,8 @@ const HorizontalPostCard = ({
               width={500}
               quality={100}
               placeholder="blur"
-              blurDataURL={postData.url}
+              blurDataURL={ImageNotfound.src}
+              layout="responsive"
             />
             <Box sx={{ display: "flex" }}>
               <Box>
