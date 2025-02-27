@@ -161,7 +161,7 @@ const PostCard = ({ postData }: { postData: Post }) => {
   }, [postData]);
 
   return (
-    <Paper elevation={3} sx={{ bgcolor: "transparent", boxShadow: "unset" }}>
+    <Box  sx={{ bgcolor: "transparent", boxShadow: "unset" }}>
       <Grid
         container
         sx={{
@@ -172,9 +172,9 @@ const PostCard = ({ postData }: { postData: Post }) => {
           item
           sx={{
             bgcolor: "white",
-            borderRadius: "12px",
-            boxShadow:
-              "0px 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12)",
+            // borderRadius: "12px",
+            // boxShadow:
+            //   "0px 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12)",
             width: "100%",
           }}
         >
@@ -347,7 +347,7 @@ const PostCard = ({ postData }: { postData: Post }) => {
           )}
         </Grid>
       </Grid>
-    </Paper>
+    </Box>
   );
 };
 

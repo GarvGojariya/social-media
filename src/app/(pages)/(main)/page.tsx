@@ -63,8 +63,8 @@ export default function Home() {
   return (
     <>
       <Box sx={{
-        paddingX: "32px",
-        paddingY: "16px",
+        // paddingX: "32px",
+        // paddingY: "16px",
         height: "100%",
         overflowY: "auto",
         width:"100%"
@@ -82,7 +82,7 @@ export default function Home() {
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: "24px"
+            // gap: "24px"
           }}
           endMessage={"You have all caught!"}
           dataLength={postsData.length}

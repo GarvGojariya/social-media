@@ -2,18 +2,11 @@
 import {
   Backdrop,
   Box,
-  Button,
-  IconButton,
-  InputAdornment,
-  TextField,
   Typography,
 } from "@mui/material";
 import React, { forwardRef, useEffect, useState } from "react";
-import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
-import { SearchRounded } from "@mui/icons-material";
 import toast from "react-hot-toast";
 import { API } from "../lib/axios";
-import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import { useRouter } from "next/navigation";
 import CreatePostModel from "./CreatePostModel";
 
@@ -27,7 +20,6 @@ interface UserData {
 const Header = forwardRef<HTMLDivElement>((props, ref) => {
   const [profileData, setProfileData] = useState<UserData>({} as UserData);
   const [loading, setLoading] = useState<boolean>(true);
-  const [searchName, setSearchName] = useState("");
   const [isCreatePostModelOpen, setIsCreatePostModelOpen] =
     useState<boolean>(false);
 
@@ -81,10 +73,11 @@ const Header = forwardRef<HTMLDivElement>((props, ref) => {
           bgcolor: "#f7f7f7",
           top: 0,
           borderBottom: "1px solid #d9d9d9",
+          height:"80px"
         }}
       >
         <Typography variant="body1">Hello, {profileData.name} 👋</Typography>
-        <Box
+        {/* <Box
           sx={{
             display: "flex",
             gap: "16px",
@@ -131,7 +124,7 @@ const Header = forwardRef<HTMLDivElement>((props, ref) => {
           <IconButton onClick={logout}>
             <LogoutRoundedIcon />
           </IconButton>
-        </Box>
+        </Box> */}
       </Box>
       <Backdrop
         sx={{
