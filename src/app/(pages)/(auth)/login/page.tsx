@@ -27,26 +27,26 @@ const Page = () => {
         setLoading(true)
         event.preventDefault();
         try {
-            const response = await API.post("/api/user/signin", { emailOrUsername: emailOrUsername, password: password });
+            // const response = await API.post("/api/user/signin", { emailOrUsername: emailOrUsername, password: password });
             // console.log(response);
-            //    const res = await signIn("credentials", {
-            //         emailOrUsername: emailOrUsername,
-            //         password: password,
-            //         redirect: false
-            //     })
-            //     console.log(res)
+               const res = await signIn("credentials", {
+                    emailOrUsername: emailOrUsername,
+                    password: password,
+                    redirect: true
+                })
+                console.log(res)
             // session.data = response?.data?.user
             setEmailOrUsername("");
             setPassword("");
-            sessionStorage.setItem("userData", JSON.stringify({
-                id: response.data.user.id,
-                name: response.data.user.name,
-                userName: response.data.user.userName,
-                profileImage: response.data.user.profileImage
-            }))
+            // sessionStorage.setItem("userData", JSON.stringify({
+            //     id: response.data.user.id,
+            //     name: response.data.user.name,
+            //     userName: response.data.user.userName,
+            //     profileImage: response.data.user.profileImage
+            // }))
             await router.push("/");
             setLoading(false)
-            toast.success(response.data?.message ?? "Login success");
+            // toast.success(response.data?.message ?? "Login success");
         } catch (error: any) {
             setEmailOrUsername("");
             setPassword("");
