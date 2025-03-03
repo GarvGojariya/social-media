@@ -32,7 +32,8 @@ const Page = () => {
                const res = await signIn("credentials", {
                     emailOrUsername: emailOrUsername,
                     password: password,
-                    redirect: true
+                   redirect: true,
+                    callbackUrl:"/"
                 })
                 console.log(res)
             // session.data = response?.data?.user

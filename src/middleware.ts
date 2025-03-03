@@ -90,8 +90,7 @@
 //     }
 // }
 
-export { default } from "next-auth/middleware"
+export { default } from "next-auth/middleware";
 export const config = {
-    matcher: ["/", "/verify/:path*", "/profile/:path*"],
-    
+  matcher: ["/", "/verify/:path*", "/profile/:path*"],
 };

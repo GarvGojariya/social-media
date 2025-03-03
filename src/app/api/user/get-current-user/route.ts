@@ -2,9 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "../../../../../utils/verifyToken";
 import connectDatabase from "../../../../../utils/db";
 import { prisma } from "../../../../../utils/db";
+import { getSession } from "next-auth/react";
 
 export async function GET(req: NextRequest) {
     const decodedToken = await verifyToken()
+    const data = await getSession()
+    console.log("🚀 ~ GET ~ data:", data)
     if (decodedToken && decodedToken.id) {
         try {
             await connectDatabase()
