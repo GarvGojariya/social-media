@@ -2,8 +2,11 @@
 import {
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   IconButton,
-  Paper,
   TextField,
   Typography,
 } from "@mui/material";
@@ -16,12 +19,16 @@ import toast from "react-hot-toast";
 
 interface CreatePostProps {
   setIsCreatePostModelOpen: Dispatch<SetStateAction<boolean>>;
+  isCreatePostModelOpen: boolean;
 }
 
-const CreatePostModel = ({ setIsCreatePostModelOpen }: CreatePostProps) => {
+const CreatePostModel = ({
+  setIsCreatePostModelOpen,
+  isCreatePostModelOpen,
+}: CreatePostProps) => {
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string>("");
   const [captionText, setCaptionText] = useState("");
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const createPost = async () => {
     setLoading(true);
@@ -31,79 +38,55 @@ const CreatePostModel = ({ setIsCreatePostModelOpen }: CreatePostProps) => {
         caption: captionText,
       });
       console.log(res);
-      setLoading(false);
-      setIsCreatePostModelOpen(false);
-      toast.success(res.data.message ?? "Email sent successfull please check.");
-      setUploadedImageUrl("");
-      setCaptionText("");
+      toast.success(res.data.message ?? "Post created successfully!");
+      handleClose();
     } catch (error: any) {
       console.log(error);
-      setLoading(false);
       toast.error(
         error?.response?.data?.message ??
-          "Failed to Create post. please try again."
+          "Failed to create post. Please try again."
       );
-      setUploadedImageUrl("");
-      setCaptionText("");
+    } finally {
+      setLoading(false);
     }
   };
 
+  const handleClose = () => {
+    setIsCreatePostModelOpen(false);
+    setUploadedImageUrl("");
+    setCaptionText("");
+  };
+
   return (
-    <Paper
-      elevation={20}
-      sx={{
-        position: "fixed",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%,-50%)",
-        width: "600px",
-        maxHeight: "700px",
-        padding: "38px",
-        borderRadius: "16px",
-      }}
+    <Dialog
+      open={isCreatePostModelOpen}
+      onClose={handleClose}
+      maxWidth="xs"
+      fullWidth
     >
-      <IconButton
-        sx={{
-          position: "absolute",
-          top: "10px",
-          right: "10px",
-        }}
-        onClick={() => {
-          setIsCreatePostModelOpen(false);
-          setUploadedImageUrl("");
-          setCaptionText("");
-        }}
-      >
-        <CancelRoundedIcon />
-      </IconButton>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: "24px",
-        }}
-      >
-        <Typography
-          sx={{
-            fontSize: "24px",
-            fontWeight: "bold",
-          }}
+      <DialogTitle>
+        Create Post
+        <IconButton
+          sx={{ position: "absolute", top: 8, right: 8 }}
+          onClick={handleClose}
         >
-          Create Post
-        </Typography>
+          <CancelRoundedIcon />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent>
         <Box
           sx={{
             display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "16px",
           }}
         >
           {uploadedImageUrl ? (
             <img
               src={uploadedImageUrl}
-              alt="Uploaded Image"
-              style={{
-                width: "100%",
-              }}
+              alt="Uploaded"
+              style={{ width: "100%" }}
             />
           ) : (
             <CldUploadWidget
@@ -118,50 +101,41 @@ const CreatePostModel = ({ setIsCreatePostModelOpen }: CreatePostProps) => {
                 <AddPhotoAlternateIcon
                   onClick={() => open()}
                   sx={{
-                    color: "#000000",
+                    color: "#000",
                     height: "100px",
                     width: "100px",
-                    "&:hover": {
-                      color: "#777",
-                    },
-                    justifySelf: "center",
                     cursor: "pointer",
+                    "&:hover": { color: "#777" },
                   }}
                 />
               )}
             </CldUploadWidget>
           )}
+          <TextField
+            label="Caption"
+            multiline
+            fullWidth
+            variant="outlined"
+            value={captionText}
+            onChange={(e) => setCaptionText(e.target.value)}
+          />
         </Box>
-        <TextField
-          id="outlined-multiline-flexible"
-          label="Caption"
-          multiline
-          style={{ width: "100%" }}
-          variant="outlined"
-          value={captionText}
-          onChange={(e) => setCaptionText(e.target.value)}
-          required
-        />
+      </DialogContent>
+      <DialogActions>
+        {/* <Button onClick={handleClose} color="secondary">
+          Cancel
+        </Button> */}
         <Button
-          variant="contained"
-          sx={{
-            color: "white",
-            backgroundColor: "#000000",
-            borderRadius: "12px",
-            textTransform: "capitalize",
-            "&:hover": {
-              backgroundColor: "#777",
-            },
-          }}
           onClick={createPost}
+          variant="contained"
+          disabled={loading}
+          sx={{ backgroundColor: "#000", color: "#fff" }}
         >
-          Create
+          {loading ? "Creating..." : "Create"}
         </Button>
-      </Box>
-    </Paper>
+      </DialogActions>
+    </Dialog>
   );
 };
-
-CreatePostModel.displayName = "CreatePostModel";
 
 export default CreatePostModel;

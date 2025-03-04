@@ -2,6 +2,9 @@
 import {
   Backdrop,
   Box,
+  Button,
+  IconButton,
+  TextField,
   Typography,
 } from "@mui/material";
 import React, { forwardRef, useEffect, useState } from "react";
@@ -9,6 +12,10 @@ import toast from "react-hot-toast";
 import { API } from "../lib/axios";
 import { useRouter } from "next/navigation";
 import CreatePostModel from "./CreatePostModel";
+import { useSession } from "next-auth/react";
+import { SearchRounded } from "@mui/icons-material";
+import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 
 interface UserData {
   id: string;
@@ -18,44 +25,39 @@ interface UserData {
 }
 
 const Header = forwardRef<HTMLDivElement>((props, ref) => {
+  const { data } = useSession();
+
   const [profileData, setProfileData] = useState<UserData>({} as UserData);
-  const [loading, setLoading] = useState<boolean>(true);
   const [isCreatePostModelOpen, setIsCreatePostModelOpen] =
     useState<boolean>(false);
 
   const router = useRouter();
-
-  const fetchData = async () => {
-    try {
-      const response = await API.get("/api/user/get-current-user");
-      setProfileData(response.data.user);
-      setLoading(false);
-    } catch (error: any) {
-      toast.error(
-        error?.response?.data?.error ??
-          "Something  went wrong while fetching user data"
-      );
-      setLoading(false);
-    }
-  };
 
   const logout = async () => {
     try {
       const response = await API.get("/api/user/logout");
       toast.success(response.data.message ?? "Logged out successfully.");
       router.push("/login");
-      setLoading(false);
     } catch (error: any) {
       toast.error(
         error?.response?.data?.error ?? "Something  went wrong while logout."
       );
-      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    // fetchData();
+    // (async () => {
+    //   const ddddd = await callInternalApi();
+    //   console.log("🚀 ~ ddddd:", ddddd);
+    // })();
+    (async () => {
+      if (data?.user) {
+        await setProfileData(data.user as UserData);
+        // setLoading(false);
+      }
+    })();
+  }, [data]);
 
   return (
     <>
@@ -65,19 +67,19 @@ const Header = forwardRef<HTMLDivElement>((props, ref) => {
         component="nav"
         sx={{
           display: "flex",
-          px: "28px",
-          py: "16px",
+          px: "18px",
+          py: "8px",
           alignItems: "center",
           position: "sticky",
           zIndex: "2",
           bgcolor: "#f7f7f7",
           top: 0,
           borderBottom: "1px solid #d9d9d9",
-          height:"80px"
+          // height:"80px"
         }}
       >
-        <Typography variant="body1">Hello, {profileData.name} 👋</Typography>
-        {/* <Box
+        <Typography variant="body1">{profileData.name}</Typography>
+        <Box
           sx={{
             display: "flex",
             gap: "16px",
@@ -86,7 +88,7 @@ const Header = forwardRef<HTMLDivElement>((props, ref) => {
             mr: "0",
           }}
         >
-          <TextField
+          {/* <TextField
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -101,30 +103,26 @@ const Header = forwardRef<HTMLDivElement>((props, ref) => {
               borderRadius: "12px",
               p: "0",
             }}
-          />
-          <Button
-            startIcon={<AddBoxOutlinedIcon />}
+          /> */}
+          <IconButton
             sx={{
               backgroundColor: "black",
               color: "white",
-              textTransform: "capitalize",
-              p: "8px 16px",
-              borderRadius: "12px",
-              width: "140px",
-              display: "flex",
-              justifyContent: "center",
               "&:hover": {
-                backgroundColor: "#777",
+                backgroundColor: "black",
+                color: "white",
+                opacity: "0.5",
+                transition: "0.3s",
               },
             }}
             onClick={() => setIsCreatePostModelOpen(true)}
           >
-            New post
-          </Button>
-          <IconButton onClick={logout}>
-            <LogoutRoundedIcon />
+            <AddBoxOutlinedIcon />
           </IconButton>
-        </Box> */}
+          {/* <IconButton onClick={logout}>
+            <LogoutRoundedIcon />
+          </IconButton> */}
+        </Box>
       </Box>
       <Backdrop
         sx={{
@@ -132,7 +130,7 @@ const Header = forwardRef<HTMLDivElement>((props, ref) => {
         }}
         open={isCreatePostModelOpen}
       >
-        <CreatePostModel setIsCreatePostModelOpen={setIsCreatePostModelOpen} />
+        <CreatePostModel isCreatePostModelOpen={isCreatePostModelOpen} setIsCreatePostModelOpen={setIsCreatePostModelOpen} />
       </Backdrop>
     </>
   );

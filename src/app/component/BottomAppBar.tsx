@@ -1,4 +1,3 @@
-
 "use client";
 import {
   Avatar,
@@ -16,8 +15,8 @@ import SettingIcon from "@/assets/icons/settingIcon.svg";
 import "@/app/globals.css";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import UserSkeleton from "./UserSkeleton";
 import { getCurrentUserData } from "../../../utils/globalHelpers/globalHelpers";
+import { useSession } from "next-auth/react";
 
 interface navLink {
   id: string;
@@ -34,10 +33,12 @@ interface UserData {
 }
 
 const BottomAppBar = () => {
+  const router = useRouter();
+  const { data } = useSession();
+
   const [value, setValue] = useState(0);
   const [profileData, setProfileData] = useState<UserData>({} as UserData);
   const [loading, setLoading] = useState<boolean>(true);
-  const router = useRouter();
 
   const navLinks: navLink[] = [
     {
@@ -66,24 +67,19 @@ const BottomAppBar = () => {
     },
   ];
 
-  const fetchData = async () => {
-    try {
-      const data = await getCurrentUserData();
-      if (data) {
-        setProfileData(data);
-      } else {
-        toast.error("Something went wrong");
-      }
-      setLoading(false);
-    } catch (error: any) {
-      toast.error("Something went wrong while fetching user data");
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchData();
-  }, []);
+    // fetchData();
+    // (async () => {
+    //   const ddddd = await callInternalApi();
+    //   console.log("🚀 ~ ddddd:", ddddd);
+    // })();
+    (async () => {
+      if (data?.user) {
+        await setProfileData(data.user as UserData);
+        setLoading(false);
+      }
+    })();
+  }, [data]);
 
   const handleNavChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -118,20 +114,23 @@ const BottomAppBar = () => {
           {navLinks.slice(0, 3).map((link, index) => (
             <BottomNavigationAction
               key={link.id}
-              label={link.name}
+              // label={link.name}
               icon={link.icon}
             />
           ))}
           {loading ? (
-            <BottomNavigationAction label="Profile" icon={<Skeleton variant="circular" />} />
+            <BottomNavigationAction
+              // label="Profile"
+              icon={<Skeleton variant="circular"/>}
+            />
           ) : (
             <BottomNavigationAction
-              label="Profile"
+              // label="Profile"
               icon={
                 <Avatar
                   src={profileData.profileImage}
                   alt={profileData.name}
-                  sx={{ width: 24, height: 24 }}
+                  sx={{ width: 36, height: 36 }}
                 />
               }
               onClick={goToProfile}
