@@ -17,7 +17,6 @@ type SessionResponse =
 
 export async function verifySession(req:NextRequest): Promise<SessionResponse> {
   const session = await getServerSession(authOptions);
-  const token = await getToken({req})
   // console.log("🚀 ~ verifySession ~ session:", session,token)
   // console.log("Session details:", {
   //   exists: !!session,

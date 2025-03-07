@@ -1,13 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDatabase from "../../../../../utils/db";
 import { prisma } from "../../../../../utils/db";
-import { verifyToken } from "../../../../../utils/verifyToken";
 import { getPostDetails } from "../../../../../utils/dbHelpers/dbHelpers";
+import { verifySession } from "../../../../../utils/verifySession";
 
 export async function POST(req: NextRequest) {
     const params = req.nextUrl.searchParams
     const postId = await params.get('postId')
-    const decodedToken = await verifyToken()
+    const sessionCheck = await verifySession(req);
+      if (!sessionCheck.authorized) return sessionCheck.response;
+    
+      const { user } = sessionCheck;
     if (!postId) {
         return NextResponse.json({
             message: "Invalid parameters"
@@ -15,7 +18,7 @@ export async function POST(req: NextRequest) {
             status: 400
         })
     }
-    if (decodedToken && decodedToken.id) {
+    if (user && user.id) {
         try {
             await connectDatabase()
             const existingPost = await getPostDetails(postId)
@@ -28,7 +31,7 @@ export async function POST(req: NextRequest) {
             }
             const alreadyLiked = await prisma.like.findFirst({
                 where: {
-                    ownerId: decodedToken.id,
+                    ownerId: user.id,
                     postId: postId
                 }
             })
@@ -48,7 +51,7 @@ export async function POST(req: NextRequest) {
             } else {
                 await prisma.like.create({
                     data: {
-                        ownerId: decodedToken.id,
+                        ownerId: user.id,
                         postId: postId,
                     }
                 })

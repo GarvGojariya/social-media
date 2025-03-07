@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDatabase from "../../../../../../utils/db";
 import { prisma } from "../../../../../../utils/db";
+import { verifySession } from "../../../../../../utils/verifySession";
 
 export async function GET(req: NextRequest) {
     const params = req.nextUrl.searchParams
+    const sessionCheck = await verifySession(req);
+      if (!sessionCheck.authorized) return sessionCheck.response;
+    
     const postId = await params.get("postId")
     const pageNo = await params.get("pageNo")
     const limit = 20

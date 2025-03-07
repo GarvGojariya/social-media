@@ -4,7 +4,6 @@ import { prisma } from "../../../../../utils/db";
 import { verifySession } from "../../../../../utils/verifySession";
 
 export async function GET(req: NextRequest) {
-  console.log("🚀 ~ GET ~ req:", req)
   const sessionCheck = await verifySession(req);
   if (!sessionCheck.authorized) return sessionCheck.response;
 

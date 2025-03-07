@@ -1,15 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDatabase from "../../../../../utils/db";
 import { prisma } from "../../../../../utils/db";
-import { verifyToken } from "../../../../../utils/verifyToken";
+import { verifySession } from "../../../../../utils/verifySession";
 
 export async function GET(req: NextRequest) {
     const params = req.nextUrl.searchParams
     const userId = await params.get("userId")
     const pageNo = await params.get("pageNo")
 
-    const decodedToken = await verifyToken()
-    if (!decodedToken || !decodedToken.id) return NextResponse.json({ message: "Unauthorized" }, {
+    const sessionCheck = await verifySession(req);
+  if (!sessionCheck.authorized) return sessionCheck.response;
+
+  const { user } = sessionCheck;
+    if (!user || !user.id) return NextResponse.json({ message: "Unauthorized" }, {
         status:
             401
     })
@@ -51,7 +54,7 @@ export async function GET(req: NextRequest) {
                                 userName: true,
                                 followers: {
                                     where: {
-                                        followedById: decodedToken.id,
+                                        followedById: user.id,
                                     },
                                     select: {
                                         followedById: true,
@@ -72,7 +75,7 @@ export async function GET(req: NextRequest) {
 
             const data: any = await detailData
             await data.map((d: any) => {
-                if (d.followedBy?.followers[0]?.followedById == decodedToken.id) {
+                if (d.followedBy?.followers[0]?.followedById == user.id) {
                     d.followedBy.isFollowed = true
                     delete d.followedBy?.followers
                 } else {

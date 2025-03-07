@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyToken } from "../../../../../utils/verifyToken";
 import connectDatabase, { prisma } from "../../../../../utils/db";
 import { getPostDetails } from "../../../../../utils/dbHelpers/dbHelpers";
+import { verifySession } from "../../../../../utils/verifySession";
 
 export async function DELETE(req: NextRequest) {
-    const decodedToken = await verifyToken()
+     const sessionCheck = await verifySession(req);
+  if (!sessionCheck.authorized) return sessionCheck.response;
+
+  const { user } = sessionCheck;
     const params = await req.nextUrl.searchParams
     const commentId = params.get("commentId")
     if (!commentId) {
@@ -13,7 +16,7 @@ export async function DELETE(req: NextRequest) {
         })
     }
     await connectDatabase()
-    if (decodedToken && decodedToken.id) {
+    if (user && user.id) {
         try {
             const comment = await prisma.comment.findUnique({
                 where: {
@@ -31,8 +34,8 @@ export async function DELETE(req: NextRequest) {
                 })
             }
             if (comment && comment.post && (
-                decodedToken.id.toString() == comment?.ownerId ||
-                decodedToken.id.toString() == comment?.post?.ownerId
+                user.id.toString() == comment?.ownerId ||
+                user.id.toString() == comment?.post?.ownerId
             )) {
                 await prisma.comment.delete({
                     where: {
