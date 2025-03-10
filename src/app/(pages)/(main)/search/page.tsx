@@ -17,6 +17,8 @@ import { searchUser } from "@/app/actions/userActions";
 import UserCard from "@/app/component/UserCard";
 import { User } from "../../../../../types/globalTypes";
 import Link from "next/link";
+import Image from "next/image";
+import { ImageNotfound } from "@/assets/images";
 
 const SearchPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -66,7 +68,10 @@ const SearchPage: React.FC = () => {
         <List sx={{ mt: 2 }}>
           {filteredUsers.map((user) => (
             <ListItem key={user.id}>
-              <Link href={`/profile/${user.id}`} style={{ textDecoration: "none" }}>
+              <Link
+                href={`/profile/${user.id}`}
+                style={{ textDecoration: "none" }}
+              >
                 <Card
                   sx={{
                     borderBottom: "1px solid #eeeeee",
@@ -91,7 +96,12 @@ const SearchPage: React.FC = () => {
                     }}
                     avatar={
                       <Avatar aria-label="recipe">
-                        <img src={user.profileImage} alt="User Image" />
+                        <Image
+                          src={user.profileImage ?? ImageNotfound.src}
+                          height={40}
+                          width={40}
+                          alt="User Image"
+                        />
                       </Avatar>
                     }
                     title={
