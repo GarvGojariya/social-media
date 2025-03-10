@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import * as jose from "jose"
 import connectDatabase, { prisma } from "../../../../../utils/db";
 import { generateAccessToken } from "../../../../../utils/generateTokens";
-import { cookies } from "next/headers";
 
 export async function POST(req: NextRequest, res: NextResponse) {
 

@@ -101,6 +101,7 @@ const BottomAppBar = () => {
           zIndex: 1000,
         }}
         elevation={3}
+        id="bottom-app-bar"
       >
         <BottomNavigation
           showLabels

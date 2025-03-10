@@ -87,11 +87,13 @@ export const theme = createTheme({
 const Layout = ({ children }: { children: ReactNode }) => {
   const headerRef = useRef<HTMLDivElement>(null);
   const [headerHeight, setHeaderHeight] = useState(0);
-
+  let bottomBarHeight = 64;
   useEffect(() => {
     if (headerRef.current) {
       setHeaderHeight(headerRef.current.offsetHeight);
     }
+    bottomBarHeight =
+      document.getElementById("bottom-app-bar")?.clientHeight ?? 64;
   }, []);
 
   return (
@@ -102,8 +104,8 @@ const Layout = ({ children }: { children: ReactNode }) => {
           justifyContent: "center",
           backgroundColor: "#f7f7f7",
           width: "100%",
-                  height: "100vh",
-          background:"black"
+          height: "100vh",
+          background: "black",
         }}
       >
         <Container
@@ -116,7 +118,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
             flexDirection: "column",
             height: "100%",
             // px: { xs: 1, sm: 2 }, // Responsive padding
-            backgroundColor:"white"
+            backgroundColor: "white",
           }}
         >
           <Header ref={headerRef} key="header" />
@@ -124,7 +126,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
             sx={{
               display: "flex",
               width: "100%",
-              height: `calc(100% - ${headerHeight}px)`,
+              height: `calc(100% - ${headerHeight + bottomBarHeight}px)`,
             }}
           >
             {children}

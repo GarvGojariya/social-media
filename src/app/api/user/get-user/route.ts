@@ -1,13 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyToken } from "../../../../../utils/verifyToken";
 import connectDatabase from "../../../../../utils/db";
 import { prisma } from "../../../../../utils/db";
+import { verifySession } from "../../../../../utils/verifySession";
 
 export async function GET(req: NextRequest) {
     const params = req.nextUrl.searchParams
     const userId = params.get('userId')
-    const decodedToken = await verifyToken()
-    if (!decodedToken) {
+    const sessionCheck = await verifySession(req);
+  if (!sessionCheck.authorized) return sessionCheck.response;
+
+  const { user: sessionData } = sessionCheck;
+    if (!sessionData) {
         return NextResponse.json({
             message: 'You are not authorized for this action please login first'
         }, {
@@ -47,7 +50,7 @@ export async function GET(req: NextRequest) {
                     where: {
                         followingId_followedById: {
                             followingId: userId,
-                            followedById: decodedToken.id
+                            followedById: sessionData.id
                         }
                     }
                 })
