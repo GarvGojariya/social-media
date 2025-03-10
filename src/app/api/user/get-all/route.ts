@@ -58,3 +58,76 @@ export async function GET(req: NextRequest) {
     }
   }
 }
+
+export async function POST(req: NextRequest) {
+  // search user by search term
+  const sessionCheck = await verifySession(req);
+  if (!sessionCheck.authorized) return sessionCheck.response;
+
+  const { user: sessionData } = sessionCheck;
+  const params = await req.nextUrl.searchParams;
+  const searchTerm = await params.get("searchTerm");
+  console.log("🚀 ~ POST ~ searchTerm:", searchTerm)
+  if (!searchTerm) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Search term is required",
+      },
+      {
+        status: 400,
+      }
+    );
+  }
+  if (!sessionData || !sessionData.id) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Unauthorized",
+      },
+      {
+        status: 401,
+      }
+    );
+  } else {
+    try {
+      await connectDatabase();
+      const users = await prisma.user.findMany({
+        where: {
+          isVerified: true,
+          name: {
+            contains: searchTerm,
+            mode: "insensitive",
+          },
+        },
+        take: 10,
+        skip: 0,
+        omit: {
+          password: true,
+          email: true,
+        },
+      });
+      return NextResponse.json(
+        {
+          success: true,
+          users: users,
+          message: "users fetched successfully",
+        },
+        {
+          status: 200,
+        }
+      );
+    } catch (error) {
+      console.log("🚀 ~ POST ~ error:", error)
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Something went wrong while fetching users.",
+        },
+        {
+          status: 500,
+        }
+      );
+    }
+  }
+}

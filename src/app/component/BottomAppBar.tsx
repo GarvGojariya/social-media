@@ -16,6 +16,7 @@ import "@/app/globals.css";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { getCurrentUserData } from "../../../utils/globalHelpers/globalHelpers";
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import { useSession } from "next-auth/react";
 
 interface navLink {
@@ -47,11 +48,17 @@ const BottomAppBar = () => {
       link: "/",
       icon: <HomeIcon />,
     },
+    // {
+    //   id: "save",
+    //   name: "Saved",
+    //   link: "/saved-posts",
+    //   icon: <SaveIcon />,
+    // },
     {
-      id: "save",
-      name: "Saved",
-      link: "/saved-posts",
-      icon: <SaveIcon />,
+      id: "search",
+      name: "Search",
+      link: "/search",
+      icon: <SearchRoundedIcon />,
     },
     {
       id: "notifications",
