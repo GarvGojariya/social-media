@@ -1,167 +1,178 @@
 "use client";
+
+import React, { useState, useRef, useTransition } from "react";
 import {
   Box,
   Grid,
-  Paper,
   Typography,
   Avatar,
   TextField,
   Button,
   IconButton,
+  Drawer,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { Comment, Post } from "../../../types/globalTypes";
 import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import BookmarkBorderRoundedIcon from "@mui/icons-material/BookmarkBorderRounded";
 import BookmarkRoundedIcon from "@mui/icons-material/BookmarkRounded";
+import MapsUgcRoundedIcon from "@mui/icons-material/MapsUgcRounded";
 import toast from "react-hot-toast";
-import { API } from "../lib/axios";
+import useSWRInfinite from "swr/infinite";
 import CommentSkeleton from "./CommentSkeleton";
 import CommentCard from "./CommentCard";
-import MapsUgcRoundedIcon from "@mui/icons-material/MapsUgcRounded";
 import { getDateTimeFromNow } from "../../../utils/globalHelpers/globalHelpers";
 import { useRouter } from "next/navigation";
-import InfiniteScroll from "react-infinite-scroll-component";
 import Image from "next/image";
 import { ImageNotfound } from "@/assets/images";
+import { Comment, Post } from "../../../types/globalTypes";
+import { addComment, likePost, savePost } from "../actions/postActions";
+import { Puller } from "./Puller";
+import { LoadingButton } from "@mui/lab";
+
+const fetcher = async (url: string) => {
+  const res = await fetch(url);
+  if (!res.ok) {
+    const error = new Error("An error occurred while fetching the data.");
+    const errorData = await res.json();
+    (error as any).info = errorData;
+    throw error;
+  }
+  return res.json();
+};
 
 const PostCard = ({ postData }: { postData: Post }) => {
-  const [loading, setLoading] = useState(true);
-  const [commentsData, setCommentsData] = useState<Comment[]>([]);
   const [isCommentBoxOpen, setIsCommentBoxOpen] = useState<boolean>(false);
   const [commentText, setCommentText] = useState<string>("");
-  const [addCommentLoading, setAddCommentLoading] = useState<boolean>(false);
+  const [isPending, startTransition] = useTransition();
   const [isLiked, setIsLiked] = useState<boolean>(postData.isLiked);
   const [isSaved, setIsSaved] = useState<boolean>(postData.isSaved);
-  const [timeAgo, setTimeAgo] = useState<string>("");
   const [likeCount, setLikeCount] = useState<number>(postData._count.likes);
   const [commentCount, setCommentCount] = useState<number>(
     postData._count.comments
   );
-  const [commentPageNo, setCommentPageNo] = useState<number>(1);
-  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [timeAgo, setTimeAgo] = useState<string>(
+    getDateTimeFromNow(postData.createdAt)
+  );
+  const commentInputRef = useRef<HTMLInputElement>(null);
+
+  const PAGE_SIZE = 10;
+
+  const getKey = (pageIndex: number, previousPageData: any) => {
+    if (!isCommentBoxOpen) return null; // Don't fetch if drawer is closed
+    if (previousPageData && !previousPageData.comments.length) return null; // Reached the end
+    return `/api/post/get-comments?postId=${postData.id}&pageNo=${
+      pageIndex + 1
+    }&limit=${PAGE_SIZE}`;
+  };
+
+  const { data, error, size, setSize, mutate } = useSWRInfinite(
+    getKey,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+    }
+  );
+
+  const loading = !data && isCommentBoxOpen;
+  const hasMore = data
+    ? data[data.length - 1]?.comments.length === PAGE_SIZE
+    : true;
+  const commentsData = data ? data.flatMap((page) => page.comments) : [];
 
   const router = useRouter();
 
-  const getPostComents = async () => {
-    try {
-      const response = await API.get(
-        `/api/post/get-comments?postId=${postData.id}&pageNo=${commentPageNo}`
-      );
-      setCommentsData(response.data?.comments);
-      setLoading(false);
-    } catch (error: any) {
-      console.log(error);
-      toast.error(
-        error?.response?.data?.error ??
-          "Something went wrong while fetching comments."
-      );
-      setLoading(false);
-    }
-  };
-
-  const fetchMoreComments = async () => {
-    try {
-      const response = await API.get(
-        `/api/post/get-comments?postId=${postData.id}&pageNo=${
-          commentPageNo + 1
-        }`
-      );
-      if (response.data?.comments.length == 0) {
-        setHasMore(false);
-      }
-      setCommentsData([...commentsData, ...response.data?.comments]);
-      setCommentPageNo(commentPageNo + 1);
-      // setLoading(false);
-    } catch (error: any) {
-      console.log(error);
-      toast.error(
-        error?.response?.data?.error ??
-          "Something went wrong while fetching comments."
-      );
-      // setLoading(false);
-    }
-  };
-
-  const handleCommentSubmit = async () => {
-    try {
-      setAddCommentLoading(true);
-      const response = await API.post(
-        `/api/comment/create?postId=${postData.id}`,
-        { text: commentText }
-      );
-      setCommentsData([response.data.comment, ...commentsData]);
-      // await getPostComents()
-      setCommentText("");
-      setAddCommentLoading(false);
-      setCommentCount(commentCount + 1);
-    } catch (error: any) {
-      console.log(error);
-      toast.error(
-        error?.response?.data?.error ??
-          "Something went wrong while creating comment."
-      );
-      setAddCommentLoading(false);
-    }
-  };
-
-  const togglePostLike = async () => {
-    try {
-      const response = await API.post(`/api/like/post?postId=${postData.id}`);
+  const togglePostLike = () => {
+    startTransition(async () => {
+      const prevLikeState = isLiked;
+      // Optimistic update
       setIsLiked(!isLiked);
       setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
-      toast.success(response.data?.message);
-    } catch (error: any) {
-      console.log(error);
-      toast.error(
-        error?.response?.data?.error ??
-          "Something went wrong while liking post."
-      );
-    }
+
+      const result = await likePost(postData.id);
+
+      if (!result.success) {
+        // Revert on failure
+        setIsLiked(prevLikeState);
+        setLikeCount(prevLikeState ? likeCount : likeCount - 1);
+        toast.error(result.message);
+      } else {
+        toast.success(result.message);
+      }
+    });
   };
 
-  const toggleSavePost = async () => {
-    try {
-      const response = await API.post(
-        `/api/post/save-post?postId=${postData.id}`
-      );
+  const toggleSavePost = () => {
+    startTransition(async () => {
+      const prevSaveState = isSaved;
+      // Optimistic update
       setIsSaved(!isSaved);
-      toast.success(response.data?.message);
-    } catch (error: any) {
-      console.log(error);
-      toast.error(
-        error?.response?.data?.error ??
-          "Something went wrong while saving post."
-      );
-    }
+
+      const result = await savePost(postData.id);
+
+      if (!result.success) {
+        // Revert on failure
+        setIsSaved(prevSaveState);
+        toast.error(result.message);
+      } else {
+        toast.success(result.message);
+      }
+    });
+  };
+
+  const handleCommentSubmit = () => {
+    if (!commentText.trim()) return;
+
+    startTransition(async () => {
+      const result = await addComment(postData.id, commentText);
+
+      if (result.success) {
+        // Update local state and SWR cache
+        setCommentText("");
+        setCommentCount(commentCount + 1);
+        mutate(
+          (data: any) => {
+            if (!data) return [[{ comments: [result.comment] }]];
+            const newData = [...data];
+            newData[0] = {
+              ...newData[0],
+              comments: [result.comment, ...newData[0].comments],
+            };
+            return newData;
+          },
+          { revalidate: false }
+        );
+      } else {
+        toast.error(
+          result.message || "Something went wrong while adding comment."
+        );
+      }
+    });
   };
 
   const handleLikeToggle = (id: string, isLiked: boolean, likes: number) => {
-    setCommentsData((prevComments) =>
-      prevComments.map((comment) =>
-        comment.id === id
-          ? { ...comment, isLiked, _count: { ...comment._count, likes } }
-          : comment
-      )
+    mutate(
+      (data: any) => {
+        if (!data) return data;
+        return data.map((page: any) => ({
+          ...page,
+          comments: page.comments.map((comment: Comment) =>
+            comment.id === id
+              ? { ...comment, isLiked, _count: { ...comment._count, likes } }
+              : comment
+          ),
+        }));
+      },
+      { revalidate: false }
     );
   };
 
-  useEffect(() => {
-    if (isCommentBoxOpen) {
-      getPostComents();
-    }
-  }, [isCommentBoxOpen]);
-
-  useEffect(() => {
-    if (postData && postData.createdAt) {
-      const tAgo = getDateTimeFromNow(postData.createdAt);
-      setTimeAgo(tAgo);
-    }
-  }, [postData]);
+  const handleCloseComments = () => {
+    setIsCommentBoxOpen(false);
+  };
 
   return (
-    <Box  sx={{ bgcolor: "transparent", boxShadow: "unset" }}>
+    <Box sx={{ bgcolor: "transparent", boxShadow: "unset" }}>
       <Grid
         container
         sx={{
@@ -172,9 +183,6 @@ const PostCard = ({ postData }: { postData: Post }) => {
           item
           sx={{
             bgcolor: "white",
-            // borderRadius: "12px",
-            // boxShadow:
-            //   "0px 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12)",
             width: "100%",
           }}
         >
@@ -190,7 +198,7 @@ const PostCard = ({ postData }: { postData: Post }) => {
                 sx={{
                   fontSize: "14px",
                   color: "black",
-                  textTransform: "capitalize ",
+                  textTransform: "capitalize",
                   "&:hover": { bgcolor: "unset" },
                 }}
                 variant="text"
@@ -206,14 +214,13 @@ const PostCard = ({ postData }: { postData: Post }) => {
               loading="lazy"
               width={500}
               height={500}
-              // layout="responsive"
               placeholder="blur"
               blurDataURL={ImageNotfound.src}
-              style={{ objectFit: "contain",width:"100%"}} 
+              style={{ objectFit: "contain", width: "100%" }}
             />
             <Box sx={{ display: "flex" }}>
               <Box>
-                <IconButton onClick={togglePostLike}>
+                <IconButton onClick={togglePostLike} disabled={isPending}>
                   {isLiked ? (
                     <FavoriteRoundedIcon
                       sx={{ color: "red", height: "24px", width: "24px" }}
@@ -226,16 +233,14 @@ const PostCard = ({ postData }: { postData: Post }) => {
                 </IconButton>
               </Box>
               <Box>
-                <IconButton
-                  onClick={() => setIsCommentBoxOpen(!isCommentBoxOpen)}
-                >
+                <IconButton onClick={() => setIsCommentBoxOpen(true)}>
                   <MapsUgcRoundedIcon
                     sx={{ height: "24px", width: "24px", color: "black" }}
                   />
                 </IconButton>
               </Box>
               <Box>
-                <IconButton onClick={toggleSavePost}>
+                <IconButton onClick={toggleSavePost} disabled={isPending}>
                   {isSaved ? (
                     <BookmarkRoundedIcon
                       sx={{ height: "24px", width: "24px", color: "black" }}
@@ -269,82 +274,115 @@ const PostCard = ({ postData }: { postData: Post }) => {
                   </Typography>
                 </Box>
               )}
-              <Box sx={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <TextField
-                  id="outlined-multiline-flexible"
-                  label="Comment"
-                  multiline
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  style={{ width: "100%" }}
-                  disabled={addCommentLoading}
-                  variant="standard"
-                />
-                <Button
-                  disabled={addCommentLoading}
-                  onClick={handleCommentSubmit}
-                  variant="contained"
-                  style={{
-                    color: "white",
-                    backgroundColor: "black",
-                    borderRadius: "12px",
-                  }}
-                >
-                  Post
-                </Button>
-              </Box>
             </Box>
           </Box>
-          {isCommentBoxOpen && (
-            <Box
-              sx={{ maxHeight: "500px", overflowY: "auto" }}
-              id="comments-box"
+
+          {/* Instagram-style Comments Drawer */}
+          <Drawer
+            anchor="bottom"
+            open={isCommentBoxOpen}
+            onClose={handleCloseComments}
+            PaperProps={{
+              sx: {
+                borderTopLeftRadius: "16px",
+                borderTopRightRadius: "16px",
+                maxHeight: "70vh",
+                maxWidth: "576px",
+                margin: "0 auto",
+              },
+            }}
+          >
+            <Puller />
+            <Typography
+              variant="h6"
+              sx={{ p: 2, textAlign: "center", borderBottom: "1px solid #eee" }}
             >
+              Comments
+            </Typography>
+
+            <Box sx={{ height: "calc(70vh - 170px)", overflow: "auto", p: 2 }}>
               {loading &&
                 Array.from({ length: 4 }).map((_, index) => (
                   <CommentSkeleton key={index} />
                 ))}
-              {!loading && commentsData.length === 0 && (
+
+              {error && (
                 <Typography
-                  sx={{
-                    textAlign: "center",
-                    p: "14px",
-                  }}
+                  sx={{ textAlign: "center", color: "error.main", p: 2 }}
                 >
+                  Failed to load comments
+                </Typography>
+              )}
+
+              {!loading && commentsData.length === 0 && (
+                <Typography sx={{ textAlign: "center", p: 2 }}>
                   No comments yet!
                 </Typography>
               )}
-              {!loading && commentsData.length > 0 && (
-                <InfiniteScroll
-                  endMessage={
-                    <Typography
-                      sx={{
-                        textAlign: "center",
-                        p: "14px",
-                      }}
-                    >
-                      You have all caught!
-                    </Typography>
-                  }
-                  // height={450}
-                  scrollableTarget="comments-box"
-                  dataLength={commentsData.length}
-                  next={fetchMoreComments}
-                  hasMore={hasMore}
-                  loader={<CommentSkeleton />}
+
+              {commentsData.map((comment) => (
+                <CommentCard
+                  key={comment.id}
+                  postOwnerId={postData.ownerId}
+                  commentData={comment}
+                  onLikeToggle={handleLikeToggle}
+                />
+              ))}
+
+              {hasMore && !loading && commentsData.length > 0 && (
+                <Button
+                  fullWidth
+                  variant="text"
+                  onClick={() => setSize(size + 1)}
+                  sx={{ mt: 2 }}
                 >
-                  {commentsData.map((comment) => (
-                    <CommentCard
-                      key={comment.id}
-                      postOwnerId={postData.ownerId}
-                      commentData={comment}
-                      onLikeToggle={handleLikeToggle}
-                    />
-                  ))}
-                </InfiniteScroll>
+                  Load more comments
+                </Button>
               )}
             </Box>
-          )}
+
+            <Box
+              sx={{
+                p: 2,
+                display: "flex",
+                alignItems: "center",
+                gap: 2,
+                borderTop: "1px solid #eee",
+                position: "sticky",
+                bottom: 0,
+                bgcolor: "white",
+              }}
+            >
+              <TextField
+                id="comment-input"
+                placeholder="Add a comment..."
+                inputRef={commentInputRef}
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                fullWidth
+                variant="outlined"
+                size="small"
+                disabled={isPending}
+              />
+              <LoadingButton
+                disabled={isPending || !commentText.trim()}
+                onClick={handleCommentSubmit}
+                variant="contained"
+                sx={{
+                  color: "white",
+                  backgroundColor: "black",
+                  borderRadius: "12px",
+                  "&:disabled": {
+                    backgroundColor: "#ccc",
+                    color: "#666",
+                  },
+                }}
+                loading={isPending}
+              >
+                Post
+              </LoadingButton>
+            </Box>
+          </Drawer>
         </Grid>
       </Grid>
     </Box>

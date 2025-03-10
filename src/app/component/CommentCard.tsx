@@ -85,6 +85,7 @@ const CommentCard = ({
                 textTransform: "capitalize ",
                 p: 0,
                 "&:hover": { bgcolor: "unset" },
+                justifyContent: "flex-start",
               }}
               variant="text"
               onClick={() => router.push(`/profile/${commentData.ownerId}`)}
