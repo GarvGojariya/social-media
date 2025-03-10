@@ -41,7 +41,6 @@ const SearchPage: React.FC = () => {
 
   return (
     <Box sx={{ width: "100%", mx: "auto" }}>
-      {/* Full-Width Search Input */}
       <TextField
         fullWidth
         variant="outlined"
@@ -57,14 +56,12 @@ const SearchPage: React.FC = () => {
         }}
       />
 
-      {/* Loading Indicator */}
       {loading && (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
           <CircularProgress size={24} />
         </Box>
       )}
 
-      {/* User List */}
       {!loading && filteredUsers.length > 0 ? (
         <List sx={{ mt: 2 }}>
           {filteredUsers.map((user) => (
