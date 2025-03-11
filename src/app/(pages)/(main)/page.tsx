@@ -33,7 +33,7 @@ export default function Home() {
     if (!observer.current || isValidating) return;
 
     const handleObserver = (entries: IntersectionObserverEntry[]) => {
-      if (entries[0].isIntersecting) {
+      if (entries[0].isIntersecting && postsData.length > 0) {
         setSize(size + 1); // Load next page
       }
     };
@@ -64,15 +64,15 @@ export default function Home() {
 
       {/* Post List */}
       {/* {!isValidating && ( */}
-        <>
-          {postsData.map((post) => (
-            <PostCard postData={post} key={post.id} />
-          ))}
-          {/* Infinite Scroll Trigger */}
-          <div ref={observer} className="h-10 flex justify-center items-center">
-            {hasMore && <PostSkeleton />}
-          </div>
-        </>
+      <>
+        {postsData.map((post) => (
+          <PostCard postData={post} key={post.id} />
+        ))}
+        {/* Infinite Scroll Trigger */}
+        <div ref={observer} className="h-10 flex justify-center items-center">
+          {hasMore && <PostSkeleton />}
+        </div>
+      </>
       {/* )} */}
     </Box>
   );
