@@ -35,6 +35,8 @@ export const authOptions: NextAuthOptions = {
             credentials.password,
             user.password
           );
+          console.log("🚀 ~ authorize ~ user:", user)
+
           if (!isValid) throw new Error("Invalid password");
           if (!user.isVerified) {
             const token = await generateEncryptedVarifyLink(user);
