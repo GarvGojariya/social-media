@@ -19,6 +19,7 @@ import { User } from "../../../../../types/globalTypes";
 import Link from "next/link";
 import Image from "next/image";
 import { ImageNotfound } from "@/assets/images";
+import UserSkeleton from "@/app/component/UserSkeleton";
 
 const SearchPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -58,11 +59,13 @@ const SearchPage: React.FC = () => {
         }}
       />
 
-      {loading && (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-          <CircularProgress size={24} />
-        </Box>
-      )}
+      {loading &&
+        // <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+        //   <CircularProgress size={24} />
+        // </Box>
+        Array.from({ length: 4 }).map((_, index) => (
+          <UserSkeleton key={index} />
+        ))}
 
       {!loading && filteredUsers.length > 0 ? (
         <List sx={{ mt: 2 }}>

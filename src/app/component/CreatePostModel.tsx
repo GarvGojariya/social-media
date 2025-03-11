@@ -95,7 +95,18 @@ const CreatePostModel = ({
                 setUploadedImageUrl(result?.info?.url);
                 widget.close();
               }}
-              onError={(error) => console.log("Upload Error:", error)}
+                onError={(error) => console.log("Upload Error:", error)}
+                options={{
+                  showSkipCropButton: false,
+                  cropping: true,
+                  croppingAspectRatio: 1,
+                  croppingValidateDimensions: true,
+                  clientAllowedFormats: ["jpg", "jpeg", "png"],
+                  croppingCoordinatesMode: "custom",
+                  
+                }}
+                uploadPreset="ml_default"
+                
             >
               {({ open }) => (
                 <AddPhotoAlternateIcon

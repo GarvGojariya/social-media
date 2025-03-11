@@ -73,6 +73,18 @@ export default function Home() {
           {hasMore && <PostSkeleton />}
         </div>
       </>
+      {postsData.length === 0 && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+          }}
+        >
+          No posts found.
+        </Box>
+      )}
       {/* )} */}
     </Box>
   );
