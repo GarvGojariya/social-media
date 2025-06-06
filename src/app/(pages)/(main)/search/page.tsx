@@ -5,7 +5,6 @@ import {
   InputAdornment,
   List,
   ListItem,
-  CircularProgress,
   Box,
   Typography,
   Avatar,

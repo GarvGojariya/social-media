@@ -45,8 +45,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({
                 error: "Password is incorrect"
             }, {
-                status: 401,
-                statusText: "Unauthorized"
+                status: 400,
+                statusText: "password is incorrect"
             },
             )
         }

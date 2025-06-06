@@ -35,7 +35,7 @@ const Page = () => {
                    redirect: true,
                     callbackUrl:"/"
                 })
-                console.log(res)
+               console.log("🚀 ~ handleSubmit ~ res:", res)
             // session.data = response?.data?.user
             setEmailOrUsername("");
             setPassword("");
@@ -49,9 +49,10 @@ const Page = () => {
             setLoading(false)
             // toast.success(response.data?.message ?? "Login success");
         } catch (error: any) {
+            console.log("🚀 ~ handleSubmit ~ error:", error)
             setEmailOrUsername("");
             setPassword("");
-            console.log(error);
+            // console.log(error);
             setLoading(false)
             toast.error(error?.response?.data?.error ?? "Login failed");
         }

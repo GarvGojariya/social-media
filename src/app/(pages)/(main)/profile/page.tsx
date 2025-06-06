@@ -93,8 +93,8 @@ const Page = () => {
       });
     }
   };
-
   const getUserFollowers = async () => {
+    console.log(":::::::::::::::::::::")
     if (profileData && profileData.id) {
       try {
         setLoading({
