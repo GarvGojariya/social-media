@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "../../../../../utils/verifyToken";
-import connectDatabase, { prisma } from "../../../../../utils/db";
+import { prisma } from "../../../../../utils/db";
 import { getPostDetails } from "../../../../../utils/dbHelpers/dbHelpers";
 
 export async function DELETE(req: NextRequest) {
@@ -12,7 +12,6 @@ export async function DELETE(req: NextRequest) {
             status: 400
         })
     }
-    await connectDatabase()
     if (decodedToken && decodedToken.id) {
         try {
             const comment = await prisma.comment.findUnique({

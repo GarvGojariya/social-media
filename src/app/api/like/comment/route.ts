@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
 import { verifyToken } from "../../../../../utils/verifyToken"
-import connectDatabase from "../../../../../utils/db"
 import { prisma } from "../../../../../utils/db"
 import { getPostDetails } from "../../../../../utils/dbHelpers/dbHelpers"
 
@@ -14,7 +13,6 @@ export async function POST(req: NextRequest) {
         })
     }
     if (decodedToken && decodedToken.id) {
-        await connectDatabase()
         const existingComment = await prisma.comment.findUnique({
             where: {
                 id: commentId

@@ -1,9 +1,7 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import connectDatabase from "../../../../../../utils/db";
 import bcrypt from "bcryptjs";
 import { prisma } from "../../../../../../utils/db";
-import { NextResponse } from "next/server";
 import { generateEncryptedVarifyLink, sendEmailWithVarifyLink } from "../../../../../../utils/auth";
 
 export const authOptions: NextAuthOptions = {
@@ -17,7 +15,6 @@ export const authOptions: NextAuthOptions = {
                 password: { label: "email", type: "password" },
             },
             async authorize(credentials: any): Promise<any> {
-                await connectDatabase();
                 try {
                     const user = await prisma?.user.findFirst({
                         where: {
@@ -27,12 +24,12 @@ export const authOptions: NextAuthOptions = {
                             ]
                         },
                     });
-                    if (!user) throw new Error("User not found");
+                    if (!user) throw new Error("User with this email or username not found");
                     const isValid = await bcrypt.compare(
                         credentials.password,
                         user.password
                     );
-                    if (!isValid) throw new Error("Invalid password");
+                    if (!isValid) throw new Error("Password is incorrect");
                     if (!user.isVerified) {
                         const token = await generateEncryptedVarifyLink(user);
                         const link = `${process.env.BASE_URL_FOR_WEB}/verify/${token.iv}/${token.encryptedData}`;
@@ -43,22 +40,13 @@ export const authOptions: NextAuthOptions = {
                                 "Click the following link to complete your registration",
                                 "Registration Confirmation"
                             );
-                            return NextResponse.json({
-                                success: true,
-                                message: "User updated successfully please check your email for verification",
-                                status: 200,
-                            })
+                            throw new Error("Please check your email for verification link");
                         } catch (error) {
-                            return NextResponse.json({
-                                success: false,
-                                message: "Failed to send verification email",
-                                status: 500,
-                            });
+                            throw new Error("Failed to send verification email");
                         }
                     }
                     return user;
                 } catch (error: any) {
-                    console.log({ error })
                     throw new Error(error.message);
                 }
             },

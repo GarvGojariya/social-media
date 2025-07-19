@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { decrypt } from "../../../../../utils/auth";
 import dayjs from "dayjs";
-import connectDatabase, { prisma } from "../../../../../utils/db";
+import { prisma } from "../../../../../utils/db";
 
 export async function POST(req: NextRequest) {
     const { iv, encryptedData } = await req.json()
@@ -14,7 +14,6 @@ export async function POST(req: NextRequest) {
     const diffInMinutes = dayjs().diff(data.expireIn, "minute");
     if (data.id && diffInMinutes <= parseInt(process.env.LINK_EXPIRE_TIME!)) {
         try {
-            await connectDatabase()
             const user = await prisma.user.findFirst({
                 where: {
                     id: data.id

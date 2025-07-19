@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import connectDatabase from "../../../../../utils/db";
 import { prisma } from "../../../../../utils/db";
 import { verifyToken } from "../../../../../utils/verifyToken";
 
@@ -16,7 +15,6 @@ export async function GET(req: NextRequest) {
     }
     if (name) {
         try {
-            await connectDatabase()
             const searchResults = await prisma.user.findMany({
                 where: {
                     AND: [

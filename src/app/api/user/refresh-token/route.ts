@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as jose from "jose"
-import connectDatabase, { prisma } from "../../../../../utils/db";
+import { prisma } from "../../../../../utils/db";
 import { generateAccessToken } from "../../../../../utils/generateTokens";
 import { cookies } from "next/headers";
 
@@ -10,7 +10,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
     if (refreshToken) {
         const { payload: decodedToken } = await jose.jwtVerify(refreshToken, new TextEncoder().encode(process.env.REFRESH_TOKEN_SECRET))
         if (decodedToken && decodedToken.id) {
-            await connectDatabase()
             const user = await prisma.user.findUnique({
                 where: {
                     id: decodedToken.id as string

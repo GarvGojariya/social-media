@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import connectDatabase from "../../../../../utils/db";
 import { cookies } from "next/headers";
 import * as jose from "jose"
 import { prisma } from "../../../../../utils/db";
@@ -10,7 +9,6 @@ export async function GET(req: NextRequest) {
     const params = req.nextUrl.searchParams;
     const postId = await params.get("id")
     const token = await cookies().get("accessToken")
-    await connectDatabase()
     if (postId) {
         if (token) {
             try {

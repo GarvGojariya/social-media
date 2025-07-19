@@ -1,8 +1,6 @@
-import connectDatabase from "../db"
 import { prisma } from "../db"
 
 const getPostDetails = async (postId: string) => {
-    await connectDatabase()
     try {
         const post = await prisma.post.findUnique({
             where: {

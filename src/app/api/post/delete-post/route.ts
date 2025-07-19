@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import connectDatabase from "../../../../../utils/db";
 import { prisma } from "../../../../../utils/db";
 
 export async function DELETE(req: NextRequest) {
@@ -12,7 +11,6 @@ export async function DELETE(req: NextRequest) {
             status: 400
         })
     }
-    await connectDatabase()
     try {
         const post = await prisma.post.findUnique({
             where: {

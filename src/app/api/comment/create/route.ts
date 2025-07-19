@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "../../../../../utils/verifyToken";
-import connectDatabase, { prisma } from "../../../../../utils/db";
+import { prisma } from "../../../../../utils/db";
 import { getPostDetails } from "../../../../../utils/dbHelpers/dbHelpers";
 
 export async function POST(req: NextRequest) {
@@ -8,7 +8,6 @@ export async function POST(req: NextRequest) {
     const postId = await params.get('postId')
     const decodedToken = await verifyToken()
     const { text } = await req.json()
-    await connectDatabase()
     if (!postId) {
         return NextResponse.json({
             error: "invalid parameters"

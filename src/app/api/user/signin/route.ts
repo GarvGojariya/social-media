@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import connectDatabase from "../../../../../utils/db";
 import { prisma } from "../../../../../utils/db"
 import { generateEncryptedVarifyLink, isPasswordCorrect, sendEmailWithVarifyLink } from "../../../../../utils/auth";
 import { generateAccessToken, generateRefreshToken } from "../../../../../utils/generateTokens";
@@ -15,7 +14,6 @@ export async function POST(req: NextRequest) {
                 status: 400
             })
         }
-        await connectDatabase()
         const user = await prisma.user.findFirst({
             where: {
                 OR: [{ email: emailOrUsername }, { userName: emailOrUsername }]

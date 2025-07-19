@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "../../../../../utils/verifyToken";
-import connectDatabase from "../../../../../utils/db";
 import { prisma } from "../../../../../utils/db";
 
 export async function POST(req: NextRequest) {
@@ -18,7 +17,6 @@ export async function POST(req: NextRequest) {
         })
     } else {
         try {
-            await connectDatabase()
             const user = await prisma.user.findUnique({
                 where: {
                     id: decodedToken.id

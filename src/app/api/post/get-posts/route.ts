@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import connectDatabase, { prisma } from "../../../../../utils/db";
+import { prisma } from "../../../../../utils/db";
 export async function GET(req: NextRequest) {
     const params = req.nextUrl.searchParams;
     const id = params.get("id")
-    await connectDatabase()
     if (id) {
         const user = await prisma.user.findUnique({
             where: {

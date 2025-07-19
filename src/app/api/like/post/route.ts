@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import connectDatabase from "../../../../../utils/db";
 import { prisma } from "../../../../../utils/db";
 import { verifyToken } from "../../../../../utils/verifyToken";
 import { getPostDetails } from "../../../../../utils/dbHelpers/dbHelpers";
@@ -17,7 +16,6 @@ export async function POST(req: NextRequest) {
     }
     if (decodedToken && decodedToken.id) {
         try {
-            await connectDatabase()
             const existingPost = await getPostDetails(postId)
             if (!existingPost) {
                 return NextResponse.json({

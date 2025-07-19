@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import connectDatabase, { prisma } from "../../../../../utils/db";
+import { prisma } from "../../../../../utils/db";
 import { verifyToken } from "../../../../../utils/verifyToken";
 
 export async function GET(req: NextRequest) {
@@ -28,8 +28,6 @@ export async function GET(req: NextRequest) {
     }
 
     try {
-        await connectDatabase();
-
         const user = await prisma.user.findUnique({
             where: {
                 id: decodedToken.id as string,

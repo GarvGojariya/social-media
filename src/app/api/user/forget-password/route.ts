@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import connectDatabase from "../../../../../utils/db";
 import { prisma } from "../../../../../utils/db";
 import { generateEncryptedVarifyLink, sendEmailWithVarifyLink } from "../../../../../utils/auth";
 
@@ -12,7 +11,6 @@ export async function POST(req: NextRequest) {
             status: 400
         })
     }
-    await connectDatabase()
     try {
         const user = await prisma.user.findUnique({
             where: {

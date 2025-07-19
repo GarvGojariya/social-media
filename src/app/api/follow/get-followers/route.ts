@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import connectDatabase from "../../../../../utils/db";
 import { prisma } from "../../../../../utils/db";
 import { verifyToken } from "../../../../../utils/verifyToken";
 
@@ -24,7 +23,6 @@ export async function GET(req: NextRequest) {
     }
     // fetch data from database or API
     try {
-        await connectDatabase()
         const user = await prisma.user.findUnique({
             where: {
                 id: userId
