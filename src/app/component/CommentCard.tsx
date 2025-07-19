@@ -5,10 +5,11 @@ import {
   Avatar,
   Box,
   Button,
-  Grid,
+  Card,
+  CardContent,
   IconButton,
-  Paper,
   Typography,
+  Stack,
 } from "@mui/material";
 import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
@@ -53,68 +54,78 @@ const CommentCard = ({
   };
 
   return (
-    <Paper
-      elevation={1}
+    <Card
+      variant="outlined"
       sx={{
-        padding: "8px",
-        marginY: "4px",
-        boxShadow: "unset",
-        "&:not(:last-child)": {
-          borderBottom: "1px solid #ccc",
-        },
-        borderRadius: "0",
-        "&:last-child": {
-          borderBottomLeftRadius: "12px",
-          borderBottomRightRadius: "12px",
+        mb: 1,
+        borderRadius: 2,
+        border: 'none',
+        bgcolor: 'transparent',
+        boxShadow: 'none',
+        '&:hover': {
+          bgcolor: 'rgba(0, 0, 0, 0.02)',
         },
       }}
     >
-      <Grid container spacing={2}>
-        <Grid item>
+      <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+        <Stack direction="row" spacing={2} alignItems="flex-start">
           <Avatar
             src={commentData.owner.profileImage}
             alt={commentData.owner.userName}
+            sx={{ width: 36, height: 36 }}
           />
-        </Grid>
-        <Grid item xs>
-          <Box>
-            <Button
-              sx={{
-                fontSize: "14px",
-                color: "black",
-                textTransform: "capitalize ",
-                p: 0,
-                "&:hover": { bgcolor: "unset" },
-              }}
-              variant="text"
-              onClick={() => router.push(`/profile/${commentData.ownerId}`)}
-            >
-              {commentData.owner.userName}
-            </Button>
-            <Typography variant="body2">{commentData.text}</Typography>
-          </Box>
-          <Box>
-            <IconButton onClick={toggleCommentLike}>
-              {isLiked ? (
-                <FavoriteRoundedIcon
-                  sx={{ color: "red", height: "16px", width: "16px" }}
-                />
-              ) : (
-                <FavoriteBorderRoundedIcon
-                  sx={{ height: "16px", width: "16px" }}
-                />
-              )}
-            </IconButton>
-            <Typography
-              variant="body2"
-              sx={{ display: "inline", marginLeft: "4px" }}
-            >
-              {likeCount}
+          
+          <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+            <Box sx={{ mb: 0.5 }}>
+              <Button
+                variant="text"
+                size="small"
+                onClick={() => router.push(`/profile/${commentData.ownerId}`)}
+                sx={{
+                  p: 0,
+                  minWidth: 'auto',
+                  color: 'text.primary',
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                  textTransform: 'none',
+                  '&:hover': { 
+                    bgcolor: 'transparent', 
+                    textDecoration: 'underline' 
+                  },
+                }}
+              >
+                {commentData.owner.userName}
+              </Button>
+            </Box>
+            
+            <Typography variant="body2" sx={{ mb: 1, wordBreak: 'break-word' }}>
+              {commentData.text}
             </Typography>
+            
+            <Stack direction="row" alignItems="center" spacing={0.5}>
+              <IconButton 
+                size="small" 
+                onClick={toggleCommentLike}
+                sx={{ 
+                  color: isLiked ? 'error.main' : 'action.default',
+                  p: 0.5,
+                }}
+              >
+                {isLiked ? (
+                  <FavoriteRoundedIcon sx={{ fontSize: 16 }} />
+                ) : (
+                  <FavoriteBorderRoundedIcon sx={{ fontSize: 16 }} />
+                )}
+              </IconButton>
+              
+              <Typography variant="caption" color="text.secondary">
+                {likeCount > 0 && `${likeCount} ${likeCount === 1 ? 'like' : 'likes'}`}
+              </Typography>
+            </Stack>
           </Box>
-        </Grid>
-      </Grid>
-    </Paper>
+        </Stack>
+      </CardContent>
+    </Card>
   );
 };
 

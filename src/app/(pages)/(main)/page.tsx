@@ -2,7 +2,15 @@
 import Image from "next/image";
 import styles from "../../page.module.css";
 import { useSession } from "next-auth/react";
-import { Backdrop, Box } from "@mui/material";
+import { 
+  Backdrop, 
+  Box, 
+  Container, 
+  Typography, 
+  Stack,
+  Fade,
+  CircularProgress
+} from "@mui/material";
 import { API } from "@/app/lib/axios";
 import { useEffect, useState } from "react";
 import { Post } from "../../../../types/globalTypes";
@@ -12,6 +20,7 @@ import PostSkeleton from "@/app/component/PostSkeleton";
 import PostCard from "@/app/component/PostCard";
 import Loader from "@/app/component/Loader";
 import CommentCard from "@/app/component/CommentCard";
+import { styled } from '@mui/material/styles';
 // import PostSkeleton from "../../components/PostSkeleton";
 // import UserSkeleton from "../../components/UserSkeleton";
 
@@ -22,6 +31,15 @@ export default function Home() {
   const [totalPosts, setTotalPosts] = useState<number>(0)
   const [hasMore, setHasMore] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(true)
+
+  const StyledContainer = styled(Container)(({ theme }) => ({
+    paddingTop: theme.spacing(3),
+    paddingBottom: theme.spacing(3),
+    minHeight: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  }));
 
   const fetchPosts = async () => {
     try {
@@ -62,42 +80,61 @@ export default function Home() {
 
   return (
     <>
-      <Box sx={{
-        paddingX: "32px",
-        paddingY: "16px",
-        height: "100%",
-        overflowY: "auto",
-        width:"100%"
-      }}
-        id="scrollableDiv">
-        {/* <Backdrop open={loading}>
-        <Loader />
-      </Backdrop> */}
-        {
-          loading && Array.from({ length: 2 }).map((_, index) => (
-            <PostSkeleton key={index} />
-          ))
-        }
-        {!loading && <InfiniteScroll
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "24px"
-          }}
-          endMessage={"You have all caught!"}
-          dataLength={postsData.length}
-          hasMore={hasMore}
-          loader={<PostSkeleton />}
-          next={fetchNextPage}
-          scrollableTarget="scrollableDiv"
-        >
-          {
-            postsData.map((post: any, index: number) => (
-              <PostCard postData={post} key={index} />
-            ))
-          }
-        </InfiniteScroll>}
-      </Box>
+      <StyledContainer 
+        maxWidth="md" 
+        sx={{
+          height: "100%",
+          overflowY: "auto",
+          width: "100%",
+          px: { xs: 2, sm: 3 },
+        }}
+        id="scrollableDiv"
+      >
+        {loading && (
+          <Stack spacing={3} sx={{ width: '100%', maxWidth: 600 }}>
+            <Box sx={{ textAlign: 'center', mb: 2 }}>
+              <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
+                Loading your feed...
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Discovering amazing content for you
+              </Typography>
+            </Box>
+            {Array.from({ length: 3 }).map((_, index) => (
+              <PostSkeleton key={index} />
+            ))}
+          </Stack>
+        )}
+        
+        {!loading && (
+          <Fade in={!loading} timeout={800}>
+            <Box sx={{ width: '100%' }}>
+              <InfiniteScroll
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: "24px"
+                }}
+                endMessage={
+                  <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 4 }}>
+                    🎉 You're all caught up! No more posts to show.
+                  </Typography>
+                }
+                dataLength={postsData.length}
+                hasMore={hasMore}
+                loader={<PostSkeleton />}
+                next={fetchNextPage}
+                scrollableTarget="scrollableDiv"
+              >
+                {postsData.map((post: any, index: number) => (
+                  <PostCard postData={post} key={index} />
+                ))}
+              </InfiniteScroll>
+            </Box>
+          </Fade>
+        )}
+      </StyledContainer>
     </>
   );
 }

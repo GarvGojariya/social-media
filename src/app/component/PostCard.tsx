@@ -1,13 +1,19 @@
 "use client";
 import {
   Box,
-  Grid,
-  Paper,
+  Card,
+  CardHeader,
+  CardMedia,
+  CardContent,
+  CardActions,
   Typography,
   Avatar,
   TextField,
   Button,
   IconButton,
+  Collapse,
+  Chip,
+  Divider,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Comment, Post } from "../../../types/globalTypes";
@@ -23,6 +29,8 @@ import MapsUgcRoundedIcon from "@mui/icons-material/MapsUgcRounded";
 import { getDateTimeFromNow } from "../../../utils/globalHelpers/globalHelpers";
 import { useRouter } from "next/navigation";
 import InfiniteScroll from "react-infinite-scroll-component";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { styled } from '@mui/material/styles';
 
 const PostCard = ({ postData }: { postData: Post }) => {
   const [loading, setLoading] = useState(true);
@@ -41,6 +49,17 @@ const PostCard = ({ postData }: { postData: Post }) => {
   const [hasMore, setHasMore] = useState<boolean>(true);
 
   const router = useRouter();
+
+  const ExpandMore = styled((props: any) => {
+    const { expand, ...other } = props;
+    return <IconButton {...other} />;
+  })(({ theme, expand }) => ({
+    transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest,
+    }),
+  }));
 
   const getPostComents = async () => {
     try {
@@ -159,187 +178,203 @@ const PostCard = ({ postData }: { postData: Post }) => {
   }, [postData]);
 
   return (
-    <Paper elevation={3} sx={{ bgcolor: "transparent", boxShadow: "unset" }}>
-      <Grid
-        container
+    <Card 
+      sx={{ 
+        maxWidth: 600, 
+        mx: 'auto',
+        mb: 3,
+        borderRadius: 3,
+        overflow: 'hidden',
+        transition: 'all 0.3s ease-in-out',
+        '&:hover': {
+          transform: 'translateY(-4px)',
+          boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+        },
+      }}
+    >
+      <CardHeader
+        avatar={
+          <Avatar 
+            src={postData.owner.profileImage} 
+            alt={postData.owner.userName}
+            sx={{ width: 48, height: 48 }}
+          />
+        }
+        title={
+          <Button
+            variant="text"
+            onClick={() => router.push(`/profile/${postData.ownerId}`)}
+            sx={{ 
+              p: 0, 
+              minWidth: 'auto',
+              color: 'text.primary',
+              fontWeight: 600,
+              fontSize: '1rem',
+              textTransform: 'none',
+              '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' }
+            }}
+          >
+            {postData.owner.userName}
+          </Button>
+        }
+        subheader={
+          <Typography variant="body2" color="text.secondary">
+            {timeAgo}
+          </Typography>
+        }
+        sx={{ pb: 1 }}
+      />
+      
+      <CardMedia
+        component="img"
+        image={postData.url}
+        alt="Post content"
         sx={{
-          justifyContent: "center",
+          maxHeight: 600,
+          objectFit: 'cover',
         }}
-      >
-        <Grid
-          item
+      />
+      
+      <CardActions disableSpacing sx={{ px: 2, py: 1 }}>
+        <IconButton 
+          onClick={togglePostLike}
           sx={{
-            bgcolor: "white",
-            borderRadius: "12px",
-            boxShadow:
-              "0px 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12)",
+            color: isLiked ? 'error.main' : 'action.default',
+            transition: 'all 0.2s ease-in-out',
+            '&:hover': {
+              transform: 'scale(1.1)',
+            },
           }}
         >
-          <Box>
-            <Box sx={{ display: "flex", alignItems: "center", padding: "8px" }}>
-              <Avatar
-                sx={{ height: "30px", width: "30px" }}
-                variant="circular"
-                src={postData.owner.profileImage}
-                alt=""
-              />
-              <Button
-                sx={{
-                  fontSize: "14px",
-                  color: "black",
-                  textTransform: "capitalize ",
-                  "&:hover": { bgcolor: "unset" },
-                }}
-                variant="text"
-                onClick={() => router.push(`/profile/${postData.ownerId}`)}
-              >
-                {postData.owner.userName}
-              </Button>
-              <Typography sx={{ fontSize: "14px" }}>{timeAgo}</Typography>
-            </Box>
-            <img
-              src={postData.url}
-              alt={"post"}
-              style={{ maxWidth: "500px" }}
-              loading="lazy"
-            />
-            <Box sx={{ display: "flex" }}>
-              <Box>
-                <IconButton onClick={togglePostLike}>
-                  {isLiked ? (
-                    <FavoriteRoundedIcon
-                      sx={{ color: "red", height: "24px", width: "24px" }}
-                    />
-                  ) : (
-                    <FavoriteBorderRoundedIcon
-                      sx={{ height: "24px", width: "24px", color: "black" }}
-                    />
-                  )}
-                </IconButton>
-              </Box>
-              <Box>
-                <IconButton
-                  onClick={() => setIsCommentBoxOpen(!isCommentBoxOpen)}
-                >
-                  <MapsUgcRoundedIcon
-                    sx={{ height: "24px", width: "24px", color: "black" }}
-                  />
-                </IconButton>
-              </Box>
-              <Box>
-                <IconButton onClick={toggleSavePost}>
-                  {isSaved ? (
-                    <BookmarkRoundedIcon
-                      sx={{ height: "24px", width: "24px", color: "black" }}
-                    />
-                  ) : (
-                    <BookmarkBorderRoundedIcon
-                      sx={{ height: "24px", width: "24px", color: "black" }}
-                    />
-                  )}
-                </IconButton>
-              </Box>
-            </Box>
-            <Box sx={{ paddingX: "12px", paddingBottom: "12px" }}>
-              {likeCount > 0 && (
-                <Typography>
-                  {likeCount} {likeCount > 1 ? "Likes" : "Like"}
-                </Typography>
-              )}
-              {postData.caption.length > 0 && (
-                <Box
-                  sx={{ display: "flex", alignItems: "center", gap: "12px" }}
-                >
-                  <Avatar
-                    sx={{ height: "30px", width: "30px" }}
-                    variant="circular"
-                    src={postData.owner.profileImage}
-                    alt=""
-                  />
-                  <Typography sx={{ fontSize: "14px" }}>
-                    {postData.caption}
-                  </Typography>
-                </Box>
-              )}
-              <Box sx={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <TextField
-                  id="outlined-multiline-flexible"
-                  label="Comment"
-                  multiline
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  style={{ width: "100%" }}
-                  disabled={addCommentLoading}
-                  variant="standard"
-                />
-                <Button
-                  disabled={addCommentLoading}
-                  onClick={handleCommentSubmit}
-                  variant="contained"
-                  style={{
-                    color: "white",
-                    backgroundColor: "black",
-                    borderRadius: "12px",
-                  }}
-                >
-                  Post
-                </Button>
-              </Box>
-            </Box>
+          {isLiked ? (
+            <FavoriteRoundedIcon />
+          ) : (
+            <FavoriteBorderRoundedIcon />
+          )}
+        </IconButton>
+        
+        <IconButton 
+          onClick={() => setIsCommentBoxOpen(!isCommentBoxOpen)}
+          sx={{
+            color: isCommentBoxOpen ? 'primary.main' : 'action.default',
+          }}
+        >
+          <MapsUgcRoundedIcon />
+        </IconButton>
+        
+        <IconButton 
+          onClick={toggleSavePost}
+          sx={{
+            color: isSaved ? 'warning.main' : 'action.default',
+            ml: 'auto',
+          }}
+        >
+          {isSaved ? <BookmarkRoundedIcon /> : <BookmarkBorderRoundedIcon />}
+        </IconButton>
+      </CardActions>
+      
+      <CardContent sx={{ pt: 0 }}>
+        {likeCount > 0 && (
+          <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
+            {likeCount} {likeCount > 1 ? "likes" : "like"}
+          </Typography>
+        )}
+        
+        {postData.caption && (
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="body2" component="span" sx={{ fontWeight: 600, mr: 1 }}>
+              {postData.owner.userName}
+            </Typography>
+            <Typography variant="body2" component="span">
+              {postData.caption}
+            </Typography>
           </Box>
-          {isCommentBoxOpen && (
-            <Box
-              sx={{ maxHeight: "500px", overflowY: "auto" }}
-              id="comments-box"
-            >
-              {loading &&
-                Array.from({ length: 4 }).map((_, index) => (
-                  <CommentSkeleton key={index} />
-                ))}
-              {!loading && commentsData.length === 0 && (
-                <Typography
-                  sx={{
-                    textAlign: "center",
-                    p: "14px",
-                  }}
-                >
-                  No comments yet!
-                </Typography>
-              )}
-              {!loading && commentsData.length > 0 && (
-                <InfiniteScroll
-                  endMessage={
-                    <Typography
-                      sx={{
-                        textAlign: "center",
-                        p: "14px",
-                      }}
-                    >
-                      You have all caught!
-                    </Typography>
-                  }
-                  // height={450}
-                  scrollableTarget="comments-box"
-                  dataLength={commentsData.length}
-                  next={fetchMoreComments}
-                  hasMore={hasMore}
-                  loader={<CommentSkeleton />}
-                >
-                  {commentsData.map((comment) => (
-                    <CommentCard
-                      key={comment.id}
-                      postOwnerId={postData.ownerId}
-                      commentData={comment}
-                      onLikeToggle={handleLikeToggle}
-                    />
-                  ))}
-                </InfiniteScroll>
-              )}
+        )}
+        
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
+          <TextField
+            placeholder="Add a comment..."
+            variant="outlined"
+            size="small"
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            disabled={addCommentLoading}
+            sx={{ 
+              flexGrow: 1,
+              '& .MuiOutlinedInput-root': {
+                borderRadius: 3,
+              },
+            }}
+          />
+          <Button
+            variant="contained"
+            size="small"
+            disabled={addCommentLoading || !commentText.trim()}
+            onClick={handleCommentSubmit}
+            sx={{ 
+              minWidth: 80,
+              borderRadius: 3,
+            }}
+          >
+            Post
+          </Button>
+        </Box>
+      </CardContent>
+      
+      <Collapse in={isCommentBoxOpen} timeout="auto" unmountOnExit>
+        <Divider />
+        <Box
+          sx={{ 
+            maxHeight: 400, 
+            overflowY: "auto",
+            bgcolor: 'grey.50',
+          }}
+          id="comments-box"
+        >
+          {loading && (
+            <Box sx={{ p: 2 }}>
+              {Array.from({ length: 3 }).map((_, index) => (
+                <CommentSkeleton key={index} />
+              ))}
             </Box>
           )}
-        </Grid>
-      </Grid>
-    </Paper>
+          
+          {!loading && commentsData.length === 0 && (
+            <Box sx={{ p: 3, textAlign: 'center' }}>
+              <Typography variant="body2" color="text.secondary">
+                No comments yet. Be the first to comment!
+              </Typography>
+            </Box>
+          )}
+          
+          {!loading && commentsData.length > 0 && (
+            <InfiniteScroll
+              endMessage={
+                <Box sx={{ p: 2, textAlign: 'center' }}>
+                  <Typography variant="body2" color="text.secondary">
+                    You've seen all comments
+                  </Typography>
+                </Box>
+              }
+              scrollableTarget="comments-box"
+              dataLength={commentsData.length}
+              next={fetchMoreComments}
+              hasMore={hasMore}
+              loader={<CommentSkeleton />}
+            >
+              {commentsData.map((comment) => (
+                <CommentCard
+                  key={comment.id}
+                  postOwnerId={postData.ownerId}
+                  commentData={comment}
+                  onLikeToggle={handleLikeToggle}
+                />
+              ))}
+            </InfiniteScroll>
+          )}
+        </Box>
+      </Collapse>
+    </Card>
   );
 };
 

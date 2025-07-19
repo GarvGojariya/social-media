@@ -1,5 +1,13 @@
 "use client"
-import { Box, IconButton, Typography } from '@mui/material'
+import { 
+    Box, 
+    Typography, 
+    Card, 
+    CardContent,
+    Chip,
+    Stack,
+    Divider
+} from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import PeopleIcon from "@/assets/icons/peopleIcon.svg"
 import { API } from '../lib/axios'
@@ -7,6 +15,7 @@ import UserCard from './UserCard'
 import { useRouter } from 'next/navigation'
 import UserSkeleton from './UserSkeleton'
 import toast from 'react-hot-toast'
+import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 
 type User = {
     id: string,
@@ -55,75 +64,110 @@ const RightSidebar = () => {
 
     return (
         <Box sx={{
-            width: "25%",
-            minWidth: '400px',
+            width: 320,
             height: "100%",
             boxSizing: "border-box",
-            padding: "28px",
+            p: 3,
             display: "flex",
             flexDirection: "column",
-            alignItems: "center",
-            mr: 0,
-            ml: "auto"
+            gap: 2,
         }}>
-            <Box sx={{
-                width: "100%",
-                maxHeight: "75vh",
-                display: "flex",
-                flexDirection: "column",
-                backgroundColor: "white",
-                borderRadius: "18px",
-                padding: "18px",
-                gap: "12px"
-            }}>
-                <Box sx={{
-                    width: "100%",
-                    display: "flex",
-                    gap: "18px",
-                    alignItems: "center",
-                }}>
-                    <PeopleIcon />
-                    <Typography variant='h5' sx={{ textTransform: "capitalize" }}>
-                        People you may know.
+            <Card 
+                sx={{ 
+                    borderRadius: 3,
+                    border: '1px solid rgba(0, 0, 0, 0.08)',
+                    boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+                }}
+            >
+                <CardContent sx={{ p: 3 }}>
+                    <Box sx={{ 
+                        display: "flex", 
+                        alignItems: "center", 
+                        gap: 2, 
+                        mb: 3 
+                    }}>
+                        <Box sx={{
+                            p: 1.5,
+                            borderRadius: 2,
+                            bgcolor: 'primary.main',
+                            color: 'white',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}>
+                            <PeopleOutlineIcon />
+                        </Box>
+                        <Box>
+                            <Typography variant='h6' sx={{ fontWeight: 600, mb: 0.5 }}>
+                                Discover People
+                            </Typography>
+                            <Typography variant='body2' color="text.secondary">
+                                Connect with new friends
+                            </Typography>
+                        </Box>
+                    </Box>
+                    
+                    {loading && (
+                        <Stack spacing={2}>
+                            {Array.from({ length: 4 }).map((_, index) => (
+                                <UserSkeleton key={index} />
+                            ))}
+                        </Stack>
+                    )}
+                    
+                    {!loading && suggestedUsers.length === 0 && (
+                        <Box sx={{ textAlign: 'center', py: 4 }}>
+                            <Typography variant="body2" color="text.secondary">
+                                No suggestions available
+                            </Typography>
+                        </Box>
+                    )}
+                    
+                    {!loading && suggestedUsers.length > 0 && (
+                        <Stack spacing={1} sx={{ maxHeight: 400, overflowY: 'auto' }}>
+                            {suggestedUsers.map((user: User) => (
+                                <UserCard
+                                    id={user.id}
+                                    key={user.id}
+                                    name={user.name}
+                                    profileImage={user.profileImage}
+                                    userName={user.userName}
+                                    isFollowed={false}
+                                    buttonClick={toggleFollow}
+                                />
+                            ))}
+                        </Stack>
+                    )}
+                </CardContent>
+            </Card>
+            
+            <Card 
+                sx={{ 
+                    borderRadius: 3,
+                    border: '1px solid rgba(0, 0, 0, 0.08)',
+                    bgcolor: 'linear-gradient(135deg, rgba(25, 118, 210, 0.05) 0%, rgba(66, 165, 245, 0.05) 100%)',
+                }}
+            >
+                <CardContent sx={{ p: 3 }}>
+                    <Typography variant='h6' sx={{ fontWeight: 600, mb: 2 }}>
+                        Quick Stats
                     </Typography>
-                </Box>
-                {loading && (
-                    <Box sx={{
-                        width: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                    }}>
-                        {Array.from({ length: 4 }).map((_, index) => (
-                            <UserSkeleton key={index} />
-                        ))}
-                    </Box>
-                )}
-                {!loading && suggestedUsers.length === 0 && (
-                    <Typography sx={{
-                        textAlign: "center"
-                    }}>No Suggested Users</Typography>
-                )}
-                {!loading && suggestedUsers.length > 0 && (
-                    <Box sx={{
-                        width: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                        overflowY: "auto"
-                    }}>
-                        {suggestedUsers.map((user: User, index: number) => (
-                            <UserCard
-                                id={user.id}
-                                key={user.id}
-                                name={user.name}
-                                profileImage={user.profileImage}
-                                userName={user.userName}
-                                isFollowed={false}
-                                buttonClick={toggleFollow}
-                            />
-                        ))}
-                    </Box>
-                )}
-            </Box>
+                    <Stack direction="row" spacing={1} flexWrap="wrap">
+                        <Chip 
+                            label={`${suggestedUsers.length} Suggestions`} 
+                            size="small" 
+                            color="primary" 
+                            variant="outlined" 
+                        />
+                        <Chip 
+                            label="Active Now" 
+                            size="small" 
+                            color="success" 
+                            variant="outlined" 
+                        />
+                    </Stack>
+                </CardContent>
+            </Card>
         </Box>
     )
 }

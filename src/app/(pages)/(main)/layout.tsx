@@ -1,28 +1,128 @@
 "use client"
 import React, { ReactNode, useEffect, useRef, useState } from 'react'
 import Sidebar from '../../component/Sidebar'
-import { Box, createTheme, outlinedInputClasses, ThemeProvider } from '@mui/material'
+import { Box, createTheme, outlinedInputClasses, ThemeProvider, CssBaseline } from '@mui/material'
 import "@/app/globals.css"
 import RightSidebar from '@/app/component/RightSidebar'
 import Header from '@/app/component/Header'
 
 export const theme = createTheme({
     palette: {
-        mode: 'light',
+        primary: {
+            main: '#1976d2',
+            light: '#42a5f5',
+            dark: '#1565c0',
+        },
+        secondary: {
+            main: '#9c27b0',
+            light: '#ba68c8',
+            dark: '#7b1fa2',
+        },
+        background: {
+            default: '#fafafa',
+            paper: '#ffffff',
+        },
+        text: {
+            primary: '#212121',
+            secondary: '#757575',
+        },
+    },
+    typography: {
+        fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+        h1: {
+            fontWeight: 700,
+            fontSize: '2.5rem',
+        },
+        h2: {
+            fontWeight: 600,
+            fontSize: '2rem',
+        },
+        h3: {
+            fontWeight: 600,
+            fontSize: '1.75rem',
+        },
+        h4: {
+            fontWeight: 600,
+            fontSize: '1.5rem',
+        },
+        h5: {
+            fontWeight: 600,
+            fontSize: '1.25rem',
+        },
+        h6: {
+            fontWeight: 600,
+            fontSize: '1rem',
+        },
+        body1: {
+            fontSize: '1rem',
+            lineHeight: 1.6,
+        },
+        body2: {
+            fontSize: '0.875rem',
+            lineHeight: 1.5,
+        },
+    },
+    shape: {
+        borderRadius: 12,
     },
     components: {
+        MuiButton: {
+            styleOverrides: {
+                root: {
+                    textTransform: 'none',
+                    borderRadius: 12,
+                    fontWeight: 600,
+                    padding: '10px 24px',
+                    boxShadow: 'none',
+                    '&:hover': {
+                        boxShadow: '0 4px 8px rgba(0,0,0,0.12)',
+                    },
+                },
+                contained: {
+                    background: 'linear-gradient(45deg, #1976d2 30%, #42a5f5 90%)',
+                    '&:hover': {
+                        background: 'linear-gradient(45deg, #1565c0 30%, #1976d2 90%)',
+                    },
+                },
+            },
+        },
+        MuiCard: {
+            styleOverrides: {
+                root: {
+                    borderRadius: 16,
+                    boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+                    border: '1px solid rgba(0,0,0,0.05)',
+                    '&:hover': {
+                        boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
+                        transform: 'translateY(-2px)',
+                        transition: 'all 0.3s ease-in-out',
+                    },
+                },
+            },
+        },
+        MuiPaper: {
+            styleOverrides: {
+                root: {
+                    borderRadius: 16,
+                    boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+                },
+            },
+        },
         MuiTextField: {
             styleOverrides: {
                 root: {
-                    '--TextField-brandBorderColor': '#E0E3E7',
-                    '--TextField-brandBorderHoverColor': '#B2BAC2',
-                    '--TextField-brandBorderFocusedColor': 'rgb(194 225 255)',
+                    '--TextField-brandBorderColor': '#e0e0e0',
+                    '--TextField-brandBorderHoverColor': '#bdbdbd',
+                    '--TextField-brandBorderFocusedColor': '#1976d2',
                     '& label.Mui-focused': {
-                        color: 'black',
+                        color: '#1976d2',
                     },
                     '& label': {
-                        color: 'black',
-                    }
+                        color: '#757575',
+                    },
+                    '& .MuiOutlinedInput-root': {
+                        borderRadius: 12,
+                    },
                 },
             },
         },
@@ -90,11 +190,12 @@ const Layout = ({ children }: { children: ReactNode }) => {
 
     return (
         <ThemeProvider theme={theme}>
+            <CssBaseline />
             <Box sx={{
                 display: 'flex',
-                backgroundColor: "#f7f7f7",
+                backgroundColor: theme.palette.background.default,
                 width: "100%",
-                height: "100vh"
+                minHeight: "100vh"
             }}>
                 <Sidebar />
                 <Box sx={{
@@ -106,7 +207,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
                     <Box sx={{
                         display: 'flex',
                         width: "100%",
-                        height: `calc(100% - ${headerHeight}px)`
+                        minHeight: `calc(100vh - ${headerHeight}px)`
                     }}>
                         {children}
                         <RightSidebar />
