@@ -352,7 +352,7 @@ const PostCard = ({ postData }: { postData: Post }) => {
               endMessage={
                 <Box sx={{ p: 2, textAlign: 'center' }}>
                   <Typography variant="body2" color="text.secondary">
-                    You've seen all comments
+                    You have seen all comments
                   </Typography>
                 </Box>
               }

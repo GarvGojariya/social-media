@@ -118,7 +118,7 @@ export default function Home() {
                 }}
                 endMessage={
                   <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 4 }}>
-                    🎉 You're all caught up! No more posts to show.
+                    🎉 You are all caught up! No more posts to show.
                   </Typography>
                 }
                 dataLength={postsData.length}
