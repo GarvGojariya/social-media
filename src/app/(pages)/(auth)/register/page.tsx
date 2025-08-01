@@ -24,6 +24,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import Loader from "@/app/component/Loader";
 import Image from "next/image";
+import AuthMobileFrame from "@/app/component/AuthMobileFrame";
 
 interface SignUpData {
   email: string;
@@ -90,41 +91,43 @@ const Page = () => {
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        maxWidth: "100%",
-        height: "100vh",
-        backgroundImage: `url(${frame1.src})`,
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-      }}
-    >
-      <CssBaseline />
-      <Backdrop sx={{ color: "#fff", zIndex: 10 }} open={loading}>
-        <Loader />
-      </Backdrop>
+    <AuthMobileFrame>
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          borderRadius: "24px",
-          padding: "24px",
-          maxWidth: "400px",
-          background: "rgb(74 168 255 / 12%)",
-          boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
-          backdropFilter: "blur(7.1px)",
-          border: "3px solid rgb(151 180 207 / 24%)",
+          justifyContent: "center",
+          maxWidth: "100%",
+          height: "100%",
+          backgroundImage: `url(${frame1.src})`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
         }}
       >
+        <CssBaseline />
+        <Backdrop sx={{ color: "#fff", zIndex: 10 }} open={loading}>
+          <Loader />
+        </Backdrop>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            borderRadius: "24px",
+            padding: "24px",
+            maxWidth: "320px",
+            width: "90%",
+            background: "rgb(74 168 255 / 12%)",
+            boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
+            backdropFilter: "blur(7.1px)",
+            border: "3px solid rgb(151 180 207 / 24%)",
+          }}
+        >
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3, width: "100%" }}>
           <Grid container spacing={2}>
             <Grid
               item
@@ -334,8 +337,9 @@ const Page = () => {
             </Grid>
           </Grid>
         </Box>
+              </Box>
       </Box>
-    </Box>
+    </AuthMobileFrame>
   );
 };
 

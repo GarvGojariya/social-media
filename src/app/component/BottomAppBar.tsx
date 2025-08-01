@@ -115,8 +115,9 @@ const BottomAppBar = () => {
           value={value}
           onChange={handleNavChange}
           sx={{
-            height: "64px",
+            height: "60px",
             borderTop: "1px solid #cfcfcf",
+            backgroundColor: "#fff",
           }}
         >
           {navLinks.slice(0, 3).map((link, index) => (

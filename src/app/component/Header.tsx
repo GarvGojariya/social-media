@@ -67,15 +67,15 @@ const Header = forwardRef<HTMLDivElement>((props, ref) => {
         component="nav"
         sx={{
           display: "flex",
-          px: "18px",
-          py: "8px",
+          px: "16px",
+          py: "12px",
           alignItems: "center",
           position: "sticky",
           zIndex: "2",
           bgcolor: "#f7f7f7",
           top: 0,
           borderBottom: "1px solid #d9d9d9",
-          // height:"80px"
+          minHeight: "60px",
         }}
       >
         <Typography variant="body1">{profileData.name}</Typography>

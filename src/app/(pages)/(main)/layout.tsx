@@ -12,6 +12,7 @@ import "@/app/globals.css";
 import RightSidebar from "@/app/component/RightSidebar";
 import Header from "@/app/component/Header";
 import BottomAppBar from "@/app/component/BottomAppBar";
+import MobileFrame from "@/app/component/MobileFrame";
 
 export const theme = createTheme({
   palette: {
@@ -87,37 +88,23 @@ export const theme = createTheme({
 const Layout = ({ children }: { children: ReactNode }) => {
   const headerRef = useRef<HTMLDivElement>(null);
   const [headerHeight, setHeaderHeight] = useState(0);
-  let bottomBarHeight = 64;
+  let bottomBarHeight = 60;
   useEffect(() => {
     if (headerRef.current) {
       setHeaderHeight(headerRef.current.offsetHeight);
     }
     bottomBarHeight =
-      document.getElementById("bottom-app-bar")?.clientHeight ?? 64;
+      document.getElementById("bottom-app-bar")?.clientHeight ?? 60;
   }, []);
 
   return (
     <ThemeProvider theme={theme}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          backgroundColor: "#f7f7f7",
-          width: "100%",
-          height: "100vh",
-          background: "black",
-        }}
-      >
-        <Container
-          maxWidth={false}
-          disableGutters
+      <MobileFrame>
+        <Box
           sx={{
-            maxWidth: "576px",
-            width: "100%",
             display: "flex",
             flexDirection: "column",
             height: "100%",
-            // px: { xs: 1, sm: 2 }, // Responsive padding
             backgroundColor: "white",
           }}
         >
@@ -127,13 +114,14 @@ const Layout = ({ children }: { children: ReactNode }) => {
               display: "flex",
               width: "100%",
               height: `calc(100% - ${headerHeight + bottomBarHeight}px)`,
+              overflow: "auto",
             }}
           >
             {children}
           </Box>
           <BottomAppBar />
-        </Container>
-      </Box>
+        </Box>
+      </MobileFrame>
     </ThemeProvider>
   );
 };

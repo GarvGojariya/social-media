@@ -13,6 +13,7 @@ import { API, instance } from "@/app/lib/axios"
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import Loader from "@/app/component/Loader";
+import AuthMobileFrame from "@/app/component/AuthMobileFrame";
 
 const Page = () => {
     const [password, setPassword] = useState<string | null>("")
@@ -59,109 +60,112 @@ const Page = () => {
     };
 
     return (
-        <Box
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: "center",
-                maxWidth: "100%",
-                height: "100vh",
-                backgroundImage: `url(${frame1.src})`,
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "cover",
-            }}>
-            <CssBaseline />
-            <Backdrop
-                sx={{ color: '#fff', zIndex: 10 }}
-                open={loading}
-            >
-                <Loader />
-            </Backdrop>
+        <AuthMobileFrame>
             <Box
                 sx={{
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    borderRadius: "24px",
-                    padding: "24px",
-                    maxWidth: "400px",
-                    background: "rgb(74 168 255 / 12%)",
-                    boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
-                    backdropFilter: "blur(7.1px)",
-                    border: "3px solid rgb(151 180 207 / 24%)"
-                }}
-            >
-                {/* <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                    <LockOutlinedIcon />
-                </Avatar> */}
-                <Typography component="h1" variant="h5">
-                    Sign in
-                </Typography>
-                <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, }}>
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="email"
-                        label="Username or Email"
-                        name="email"
-                        autoComplete="email"
-                        autoFocus
-                        value={emailOrUsername}
-                        onChange={(e) => setEmailOrUsername(e.target.value)}
-                        variant="outlined"
-                    />
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Password"
-                        type="password"
-                        id="password"
-                        autoComplete="current-password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        variant="outlined"
-                        InputProps={{
-                            endAdornment: <InputAdornment position='end'>
-                                <IconButton onClick={() => setIsPasswordVisible(!isPasswordVisible)}>
-                                    {isPasswordVisible ?
-                                        <VisibilityIcon sx={{
-                                            color: "whitesmoke",
-                                        }} />
-                                        :
-                                        <VisibilityOffIcon sx={{
-                                            color: "whitesmoke",
-                                        }} />}
-                                </IconButton>
-                            </InputAdornment>
-                        }}
-                    />
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        sx={{ mt: 3, mb: 2, color: "#121212" }}
-                        fullWidth
-                    >
-                        Sign In
-                    </Button>
-                    <Grid container>
-                        <Grid item xs>
-                            <Link href="/forget-password" variant="body2">
-                                Forgot password?
-                            </Link>
+                    justifyContent: "center",
+                    maxWidth: "100%",
+                    height: "100%",
+                    backgroundImage: `url(${frame1.src})`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundSize: "cover",
+                }}>
+                <CssBaseline />
+                <Backdrop
+                    sx={{ color: '#fff', zIndex: 10 }}
+                    open={loading}
+                >
+                    <Loader />
+                </Backdrop>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        borderRadius: "24px",
+                        padding: "24px",
+                        maxWidth: "320px",
+                        width: "90%",
+                        background: "rgb(74 168 255 / 12%)",
+                        boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
+                        backdropFilter: "blur(7.1px)",
+                        border: "3px solid rgb(151 180 207 / 24%)"
+                    }}
+                >
+                    {/* <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                        <LockOutlinedIcon />
+                    </Avatar> */}
+                    <Typography component="h1" variant="h5">
+                        Sign in
+                    </Typography>
+                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, width: "100%" }}>
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="email"
+                            label="Username or Email"
+                            name="email"
+                            autoComplete="email"
+                            autoFocus
+                            value={emailOrUsername}
+                            onChange={(e) => setEmailOrUsername(e.target.value)}
+                            variant="outlined"
+                        />
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="password"
+                            label="Password"
+                            type="password"
+                            id="password"
+                            autoComplete="current-password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            variant="outlined"
+                            InputProps={{
+                                endAdornment: <InputAdornment position='end'>
+                                    <IconButton onClick={() => setIsPasswordVisible(!isPasswordVisible)}>
+                                        {isPasswordVisible ?
+                                            <VisibilityIcon sx={{
+                                                color: "whitesmoke",
+                                            }} />
+                                            :
+                                            <VisibilityOffIcon sx={{
+                                                color: "whitesmoke",
+                                            }} />}
+                                    </IconButton>
+                                </InputAdornment>
+                            }}
+                        />
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            sx={{ mt: 3, mb: 2, color: "#121212" }}
+                            fullWidth
+                        >
+                            Sign In
+                        </Button>
+                        <Grid container>
+                            <Grid item xs>
+                                <Link href="/forget-password" variant="body2">
+                                    Forgot password?
+                                </Link>
+                            </Grid>
+                            <Grid item>
+                                <Link href="/register" variant="body2">
+                                    {"Don't have an account? Sign Up"}
+                                </Link>
+                            </Grid>
                         </Grid>
-                        <Grid item>
-                            <Link href="/register" variant="body2">
-                                {"Don't have an account? Sign Up"}
-                            </Link>
-                        </Grid>
-                    </Grid>
+                    </Box>
                 </Box>
             </Box>
-        </Box>
+        </AuthMobileFrame>
     );
 };
 
